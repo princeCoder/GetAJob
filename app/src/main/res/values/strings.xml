@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">GetAJob</string>
+    <string name="content_authority">com.princecoder.getajob</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -15,4 +16,13 @@
     <string name="nav_about">About</string>
     <string name="nav_feedback">Feedback</string>
     <string name="nav_settings">Settings</string>
+    <string name="company_logo">Company Logo</string>
+
+
+    <string name="recycler_binding_error">Not bound to RecyclerView</string>
+    <string name="unknown_uri">"Unknown uri: "</string>
+    <string name="db_insertion_error">"Failed to insert row into: "</string>
+    <string name="db_update_error">Cannot have null content values</string>
+    <string name="db_redondance_error">Attempting to insert but value is already in database.
+    </string>
 </resources>
