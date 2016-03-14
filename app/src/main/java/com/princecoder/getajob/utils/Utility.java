@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.princecoder.getajob.model.JobModel;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -57,4 +59,9 @@ public class Utility {
         }
 
     }
+
+    public static String getLocationId(String place){
+        return JobModel.myLocations.get(place);
+    }
+
 }

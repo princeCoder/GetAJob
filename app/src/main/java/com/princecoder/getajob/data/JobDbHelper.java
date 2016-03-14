@@ -24,6 +24,7 @@ public class JobDbHelper extends SQLiteOpenHelper{
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         final String SQL_CREATE_JOB_TABLE = "CREATE TABLE " + JobContract.JobEntry.TABLE_NAME + " ("+
                 JobContract.JobEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                JobContract.JobEntry.POST_ID + " TEXT NOT NULL," +
                 JobContract.JobEntry.TITLE + " TEXT NOT NULL," +
                 JobContract.JobEntry.LOCATION + " TEXT NOT NULL," +
                 JobContract.JobEntry.DESC + " TEXT ," +

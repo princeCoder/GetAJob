@@ -31,6 +31,8 @@ public class JobContract {
 
         public static final String TABLE_NAME = "jobs";
 
+        public static final String POST_ID = "id";
+
         public static final String TITLE = "title";
 
         public static final String COMPANY_LOGO = "imgurl";

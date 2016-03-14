@@ -25,4 +25,5 @@
     <string name="db_update_error">Cannot have null content values</string>
     <string name="db_redondance_error">Attempting to insert but value is already in database.
     </string>
+    <string name="title_activity_list_jobs">ListJobs</string>
 </resources>

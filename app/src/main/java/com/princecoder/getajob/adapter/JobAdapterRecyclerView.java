@@ -30,8 +30,9 @@ public class JobAdapterRecyclerView extends RecyclerView.Adapter<JobAdapterRecyc
     //Current element selected
     private int selectedItem=-1;
 
-    public JobAdapterRecyclerView(Context c, ViewHolderOnClickHandler vh) {
+    public JobAdapterRecyclerView(Context c, ArrayList<Job> jobs, ViewHolderOnClickHandler vh) {
         mContext = c;
+        mElements=jobs;
         mCallback=vh;
     }
 
