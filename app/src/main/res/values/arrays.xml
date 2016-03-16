@@ -3,7 +3,7 @@
 
     <string-array name="pref_start_options">
         <item>@string/nav_search</item>
-        <item>@string/nav_saved_jobs</item>
+        <item>@string/nav_track</item>
     </string-array>
 
     <string-array name="pref_start_values">
@@ -13,7 +13,7 @@
 
     <string-array name="nav_titles">
         <item>@string/nav_search</item>
-        <item>@string/nav_saved_jobs</item>
+        <item>@string/nav_track</item>
         <item>@string/nav_about</item>
         <item>@string/nav_feedback</item>
         <item>@string/nav_settings</item>

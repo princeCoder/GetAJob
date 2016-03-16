@@ -6,9 +6,9 @@
             android:icon="@drawable/ic_menu_camera"
             android:title="@string/nav_search"/>
         <item
-            android:id="@+id/nav_my_jobs"
+            android:id="@+id/nav_track"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/nav_saved_jobs"/>
+            android:title="@string/nav_track"/>
         <item
             android:id="@+id/nav_about"
             android:icon="@drawable/ic_menu_slideshow"

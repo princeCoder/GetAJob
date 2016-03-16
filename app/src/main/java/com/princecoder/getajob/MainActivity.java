@@ -1,11 +1,12 @@
 package com.princecoder.getajob;
 
-import android.app.Fragment;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity
         int selectedindex=-1;
         if (id == R.id.nav_search) {// Handle search actions
             selectedindex=0;
-        } else if (id == R.id.nav_my_jobs) {// Handle the jobs action
+        } else if (id == R.id.nav_track) {// Handle the jobs action
             selectedindex=1;
         }
         else if (id == R.id.nav_about) { // Handle the about action
@@ -130,24 +131,24 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment ;
         if(position==0){
             fragment= new SearchFragment();
-            getFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
 
         }else if(position==1){
-            fragment = new SavedJobFragment();
-            getFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
+            fragment = new TrackFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
         }
         else if(position==2){
             fragment = new AboutFragment();
-            getFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
         }
         else if(position==3){
             fragment = new FeedbackFragment();
-            getFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
         }
-        else{
-            SettingFragment fragmentPreference=new SettingFragment();
-            getFragmentManager().beginTransaction().replace(R.id.container,fragmentPreference).commit();
-        }
+//        else{
+//            SettingFragment fragmentPreference=new SettingFragment();
+//            getSupportFragmentManager().beginTransaction().replace(R.id.container,fragmentPreference).commit();
+//        }
 
         setTitle(mDrawerTitles[position]);
         mDrawerLayout.closeDrawer(GravityCompat.START);

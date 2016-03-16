@@ -11,12 +11,11 @@ import android.view.ViewGroup;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SavedJobFragment extends Fragment {
-
+public class RecentFragment extends Fragment {
 
     // newInstance constructor for creating fragment with arguments
-    public static SavedJobFragment newInstance() {
-        SavedJobFragment fragmentFirst = new SavedJobFragment();
+    public static RecentFragment newInstance() {
+        RecentFragment fragmentFirst = new RecentFragment();
         return fragmentFirst;
     }
 
@@ -24,16 +23,14 @@ public class SavedJobFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     // Inflate the view for the fragment based on layout XML
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_saved_jobs, container, false);
+        View view = inflater.inflate(R.layout.fragment_recent, container, false);
         return view;
     }
-
 
 }

@@ -69,8 +69,11 @@ public class Utility {
         Geocoder gcd = new Geocoder(context, Locale.getDefault());
         List<Address> addresses = null;
         try {
-            addresses = gcd.getFromLocation(lon,lat, 1);
+            addresses = gcd.getFromLocation(lat,lon, 1);
             if (addresses.size() > 0){
+                String cit=addresses.get(0).getLocality();
+                String coun=addresses.get(0).getAdminArea();
+
                 String city=addresses.get(0).getLocality()!=null?addresses.get(0).getLocality()+", ":"";
                 String local=city+((addresses.get(0).getAdminArea()!=null)?addresses.get(0).getAdminArea():addresses.get(0).getCountryName());
                 return local;
