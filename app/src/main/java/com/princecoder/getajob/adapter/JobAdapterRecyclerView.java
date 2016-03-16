@@ -117,6 +117,8 @@ public class JobAdapterRecyclerView extends RecyclerView.Adapter<JobAdapterRecyc
         this.mElements = mElements;
     }
 
+
+
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.mTitle.setText(mElements.get(position).getTitle());

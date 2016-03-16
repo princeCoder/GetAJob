@@ -3,7 +3,6 @@ package com.princecoder.getajob.sync;
 import android.app.IntentService;
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
 
 import com.princecoder.getajob.BuildConfig;
 import com.princecoder.getajob.model.Job;
@@ -12,9 +11,9 @@ import com.princecoder.getajob.utils.Utility;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -82,7 +81,6 @@ public class JobService extends IntentService{
 
     //Fetch jobs from Intenet
     private void fetchJobFromInternet(Job job) {
-
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
@@ -102,14 +100,14 @@ public class JobService extends IntentService{
                 Uri builtUri=null;
                 String locationid=Utility.getLocationId(job.getLocation());
                 if((locationid!=null)&&(!job.getTitle().isEmpty())){
-                   builtUri = Uri.parse(AUTHENTIC_JOBS_BASE_URL).buildUpon()
+                    builtUri = Uri.parse(AUTHENTIC_JOBS_BASE_URL).buildUpon()
                             .appendQueryParameter(APP_ID_PARAM, BuildConfig.AUTHENTIC_JOBS__API_KEY) //This is how I get the API-Key from gradle
                             .appendQueryParameter("method", METHOD_PARAM)
                             .appendQueryParameter("keywords", job.getTitle())
                             .appendQueryParameter("location", locationid)
-                           .appendQueryParameter("perpage", PER_PAGE)
-                           .appendQueryParameter("format", FORMAT)
-                           .build();
+                            .appendQueryParameter("perpage", PER_PAGE)
+                            .appendQueryParameter("format", FORMAT)
+                            .build();
                 }
                 else if(locationid==null) {
                     builtUri = Uri.parse(AUTHENTIC_JOBS_BASE_URL).buildUpon()
@@ -129,63 +127,33 @@ public class JobService extends IntentService{
                             .appendQueryParameter("format", FORMAT)
                             .build();
                 }
-                URL url = new URL(builtUri.toString());
+                URL url = null;
+                url = new URL(builtUri.toString());
 
                 System.out.println("------- Url;   "+url);
 
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
+                jobsJsonStr = Utility.getData(urlConnection);
+                if((jobsJsonStr== null)||(jobsJsonStr.length()==0)){
                     return;
                 }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
 
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    //setLocationStatus(getContext(), LOCATION_STATUS_SERVER_DOWN);
-                    return;
-                }
-                jobsJsonStr = buffer.toString();
-                jobList= (ArrayList<Job>) JobJSONParser.parseFeed(jobsJsonStr);
+                jobList= (ArrayList<Job>) JobJSONParser.parseFeed(getApplicationContext(),jobsJsonStr);
 
                 // We brodcast the response to the fragment
                 Intent intent = new Intent(SERVICE_JOBS);
                 intent.putParcelableArrayListExtra(JOB_TAG,jobList);
                 getApplicationContext().sendBroadcast(intent);
-
-            }catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attempting
-                // to parse it.
-                //setLocationStatus(getContext(), LOCATION_STATUS_SERVER_DOWN);
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
-                    }
-                }
+            }catch (ProtocolException e) {
+                e.printStackTrace();
             }
-
+            catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         else{
             //Todo I send a broadcast for not having a connection

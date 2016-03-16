@@ -1,13 +1,14 @@
 package com.princecoder.getajob;
 
 
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 
 /**
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
  */
 public class AboutFragment extends Fragment {
 
+    TextView city;
 
     public AboutFragment() {
         // Required empty public constructor
@@ -25,7 +27,9 @@ public class AboutFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_about, container, false);
+        View rootView=inflater.inflate(R.layout.fragment_about, container, false);
+        TextView city= (TextView) rootView.findViewById(R.id.city);
+        return rootView;
 
     }
 

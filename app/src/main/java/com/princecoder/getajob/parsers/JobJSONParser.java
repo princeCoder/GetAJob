@@ -1,7 +1,10 @@
 package com.princecoder.getajob.parsers;
 
+import android.content.Context;
+
 import com.princecoder.getajob.model.Job;
 import com.princecoder.getajob.utils.L;
+import com.princecoder.getajob.utils.Utility;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,7 +21,7 @@ public class JobJSONParser {
     //log Tag
     private final static String LOG_TAG = JobJSONParser.class.getSimpleName();
 
-    public static List<Job> parseFeed(String content) {
+    public static List<Job> parseFeed(Context context, String content) {
 
         // Job information
         final String JOB_POST_ID = "id";
@@ -36,6 +39,11 @@ public class JobJSONParser {
         final String JOB_COMPANY_TAG_LINE = "tagline";
         final String COMPANY = "company";
         final String LOCATION = "location";
+        final String LON = "lng";
+        final String LAT = "lat";
+        final String TYPE = "type";
+        final String TYPE_NAME = "name";
+
 
         JSONObject jobObject;
         String postId="";
@@ -51,6 +59,7 @@ public class JobJSONParser {
         String companyName="";
         String companyLogo="";
         String tagLine="";
+        String type="";
 
         try{
             JSONObject jobsJson = new JSONObject(content).getJSONObject("listings");
@@ -67,17 +76,21 @@ public class JobJSONParser {
                 description=jobObject.has(JOB_DESCRIPTION)?jobObject.getString(JOB_DESCRIPTION):"";
                 perks=jobObject.has(JOB_PERKS)?jobObject.getString(JOB_PERKS):"";
                 postdate=jobObject.has(JOB_POSTDATE)?jobObject.getString(JOB_POSTDATE):"";
-                relocationAssistance=jobObject.has(JOB_RELOCATION_ASSISTANCE)?jobObject.getInt(JOB_RELOCATION_ASSISTANCE):1;
+                relocationAssistance=jobObject.has(JOB_RELOCATION_ASSISTANCE)?jobObject.getInt(JOB_RELOCATION_ASSISTANCE):0;
                 keywords=jobObject.has(JOB_KEYWORDS)?jobObject.getString(JOB_KEYWORDS):"";
                 applyUrl=jobObject.has(JOB_APPLY_URL)?jobObject.getString(JOB_APPLY_URL):"";
                 url=jobObject.has(JOB_URL)?jobObject.getString(JOB_URL):"";
+                type=jobObject.has(TYPE)?jobObject.getJSONObject(TYPE).getString(TYPE_NAME):"Not Specified";
 
                 //Company Object
                 if(jobObject.has(COMPANY)){
                     JSONObject company=jobObject.getJSONObject(COMPANY);
 
                     if(company.has(LOCATION)){
-                        location=company.getJSONObject(LOCATION).getString(JOB_LOCATION);
+                        JSONObject locationObject=company.getJSONObject(LOCATION);
+                        String lat=locationObject.getString(LAT);
+                        String lgn=locationObject.getString(LON);
+                        location=Utility.getLocationFromLonLat(context,Double.parseDouble(lgn),Double.parseDouble(lat));
                     }
                     if(company.has(JOB_COMPANY_NAME)){
                         companyName=company.getString(JOB_COMPANY_NAME);
@@ -93,7 +106,7 @@ public class JobJSONParser {
 
                 Job job=new Job(postId,title,description
                         ,perks,postdate,relocationAssistance
-                        ,location,companyName,companyLogo,keywords,url,applyUrl,tagLine);
+                        ,location,companyName,companyLogo,keywords,url,applyUrl,tagLine,type);
                 jobArrayList.add(job);
             }
             return jobArrayList;

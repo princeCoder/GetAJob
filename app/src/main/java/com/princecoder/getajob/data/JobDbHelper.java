@@ -36,6 +36,7 @@ public class JobDbHelper extends SQLiteOpenHelper{
                 JobContract.JobEntry.URL + " TEXT, " +
                 JobContract.JobEntry.APPLY_URL + " TEXT, " +
                 JobContract.JobEntry.COMPANY_LOGO + " TEXT, " +
+                JobContract.JobEntry.TYPE + " TEXT, " +
                 JobContract.JobEntry.COMPANY_TAG_LINE + " TEXT)";
         sqLiteDatabase.execSQL(SQL_CREATE_JOB_TABLE);
     }

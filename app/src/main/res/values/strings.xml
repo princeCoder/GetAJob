@@ -26,4 +26,6 @@
     <string name="db_redondance_error">Attempting to insert but value is already in database.
     </string>
     <string name="title_activity_list_jobs">ListJobs</string>
+    <string name="title_activity_job_detail">JobDetailActivity</string>
+    <string name="job_selected_listener_error">Must Implement OnJobSelectedListener</string>
 </resources>

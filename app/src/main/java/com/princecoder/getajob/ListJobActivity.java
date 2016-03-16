@@ -1,5 +1,6 @@
 package com.princecoder.getajob;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -7,7 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-public class ListJobActivity extends AppCompatActivity {
+import com.princecoder.getajob.model.Job;
+
+public class ListJobActivity extends AppCompatActivity implements ListJobsFragment.OnJobSelectedListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,4 +30,12 @@ public class ListJobActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    @Override
+    public void onJobSelectedListener(Job job) {
+        if(job!=null){
+            Intent intent = new Intent(this, JobDetailActivity.class)
+                    .putExtra("Job", job);
+            startActivity(intent);
+        }
+    }
 }

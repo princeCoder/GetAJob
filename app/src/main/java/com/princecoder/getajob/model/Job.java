@@ -20,8 +20,8 @@ public class Job implements Parcelable{
     private String url;
     private String applyUrl;
     private String companyTagLine;
-
-    public Job(String id, String title, String description, String perks, String postDate, int relocationAssistance, String location, String companyName, String companyLogo, String keywords, String url, String applyUrl, String companyTagLine) {
+    private String jobType;
+    public Job(String id, String title, String description, String perks, String postDate, int relocationAssistance, String location, String companyName, String companyLogo, String keywords, String url, String applyUrl, String companyTagLine, String jobType) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -35,6 +35,7 @@ public class Job implements Parcelable{
         this.url = url;
         this.applyUrl = applyUrl;
         this.companyTagLine = companyTagLine;
+        this.jobType=jobType;
     }
 
 
@@ -53,6 +54,7 @@ public class Job implements Parcelable{
         this.url = null;
         this.applyUrl = null;
         this.companyTagLine = null;
+        this.jobType=null;
     }
 
 
@@ -70,6 +72,7 @@ public class Job implements Parcelable{
         url = in.readString();
         applyUrl = in.readString();
         companyTagLine = in.readString();
+        jobType=in.readString();;
     }
 
     public static final Creator<Job> CREATOR = new Creator<Job>() {
@@ -188,6 +191,14 @@ public class Job implements Parcelable{
         this.companyTagLine = companyTagLine;
     }
 
+    public String getJobType() {
+        return jobType;
+    }
+
+    public void setJobType(String jobType) {
+        this.jobType = jobType;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -209,5 +220,6 @@ public class Job implements Parcelable{
         parcel.writeString(url);
         parcel.writeString(applyUrl);
         parcel.writeString(companyTagLine);
+        parcel.writeString(jobType);
     }
 }

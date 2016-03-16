@@ -1,5 +1,6 @@
 package com.princecoder.getajob;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -60,6 +61,10 @@ public class ListJobsFragment extends Fragment {
 
     //Job tag
     public static String JOB_TAG="JOB_TAG";
+    
+    //Listener
+    
+    OnJobSelectedListener mListener;
 
     public ListJobsFragment() {
     }
@@ -81,6 +86,10 @@ public class ListJobsFragment extends Fragment {
             @Override
             public void onClick(int id, JobAdapterRecyclerView.ViewHolder vh) {
                 //@Todo display job details
+                Job job=mAdapter.getItem(id);
+                mListener.onJobSelectedListener(job);
+//                Intent intent=new Intent(getActivity(),JobDetailActivity.class);
+//                getActivity().startActivity(intent);
             }
         });
 
@@ -123,7 +132,17 @@ public class ListJobsFragment extends Fragment {
 
         return myView;
     }
-
+    
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnJobSelectedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(TAG + activity.getString(R.string.job_selected_listener_error));
+        }
+    }
+    
     @Override
     public void onStart() {
         super.onStart();
@@ -157,12 +176,16 @@ public class ListJobsFragment extends Fragment {
                 mJobList=intent.getParcelableArrayListExtra(JobService.JOB_TAG);
                 mProgressBar.setVisibility(View.GONE);
                 mAdapter.swapElements(mJobList);
-                if(mJobList.size()==0){ //We display a message in the snackBar
+                if(mJobList!=null && mJobList.size()==0){ //We display a message in the snackBar
                     Snackbar.make(getView(), "No job found in that location", Snackbar.LENGTH_LONG).show();
                 }
             }
         }
     };
+
+    public interface OnJobSelectedListener{
+        void onJobSelectedListener(Job job);
+    }
 
 
 }

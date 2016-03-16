@@ -57,6 +57,8 @@ public class JobContract {
 
         public static final String COMPANY_TAG_LINE = "companytagline";
 
+        public static final String TYPE = "type";
+
 
         // for building URIs on insertion
         public static Uri buildJobUri(long id) {

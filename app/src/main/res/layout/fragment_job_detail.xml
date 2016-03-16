@@ -1,0 +1,243 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                tools:context="com.princecoder.getajob.JobDetailActivityFragment"
+                tools:showIn="@layout/activity_job_detail">
+    <ScrollView android:layout_width="match_parent"
+                android:layout_height="match_parent">
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- Header-->
+
+            <FrameLayout android:layout_width="match_parent"
+                         android:layout_height="wrap_content">
+                <!--<View android:layout_width="match_parent"-->
+                      <!--android:layout_height="match_parent"-->
+                      <!--android:background="@drawable/scrim_gradient"/>-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_marginTop="@dimen/horizontal_margin"
+                    android:layout_marginBottom="@dimen/horizontal_margin">
+
+                    <!--suppress AndroidLintContentDescription -->
+                    <com.princecoder.getajob.AspectRatioImageView
+                        android:id="@+id/company_logo"
+                        android:layout_width="@dimen/icon_dimens"
+                        android:layout_gravity="center_vertical"
+                        android:layout_height="@dimen/icon_dimens"
+                        android:layout_marginStart="@dimen/vertical_margin"
+                        android:layout_marginLeft="@dimen/vertical_margin"/>
+                    <LinearLayout android:layout_width="match_parent"
+                                  android:layout_weight="4"
+
+                                  android:layout_height="match_parent"
+                                  android:layout_gravity="center_vertical"
+                                  android:layout_marginLeft="@dimen/vertical_margin"
+                                  android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/job_title"
+                            android:layout_width="match_parent"
+                            android:text="Title"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:textColor="@color/primary_text"
+                            android:textAppearance="?attr/textAppearanceListItem"
+                            android:paddingRight="@dimen/vertical_margin"
+                            android:paddingEnd="@dimen/vertical_margin"
+                            android:fontFamily="sans-serif-condensed"
+                            android:ellipsize="end"
+                            android:maxLines="1" />
+
+                        <TextView
+                            android:id="@+id/company"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:maxLines="1"
+                            android:text="Company"
+                            android:paddingRight="@dimen/vertical_margin"
+                            android:paddingEnd="@dimen/vertical_margin"
+                            android:textColor="@color/secondary_text"
+                            android:textAppearance="?attr/textAppearanceListItemSmall"
+                            android:fontFamily="sans-serif-condensed"
+                            android:singleLine="true"
+                            android:ellipsize="end" />
+
+                        <TextView
+                            android:id="@+id/job_location"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:maxLines="1"
+                            android:text="City"
+                            android:paddingRight="@dimen/vertical_margin"
+                            android:paddingEnd="@dimen/vertical_margin"
+                            android:textColor="@color/secondary_text"
+                            android:textAppearance="?attr/textAppearanceListItemSmall"
+                            android:fontFamily="sans-serif-condensed"
+                            android:singleLine="true"
+                            android:ellipsize="end" />
+                    </LinearLayout>
+                </LinearLayout>
+            </FrameLayout>
+
+            <!-- Divider-->
+            <View android:layout_width="match_parent"
+                  android:layout_margin="5dp"
+                  android:layout_height="1dp"
+                  android:background="@color/darker_gray"/>
+
+            <!-- Apply and save container-->
+            <RelativeLayout android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                <Button android:layout_width="100dp"
+                             android:layout_height="40dp"
+                             android:id="@+id/save_btn"
+                             android:text="Save"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                             android:background="@color/darker_gray"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"/>
+
+                <Button android:layout_width="100dp"
+                             android:layout_height="40dp"
+                             android:id="@+id/apply_btn_btn"
+                             android:text="Apply"
+                             android:gravity="center"
+                             android:textColor="@color/white"
+                             android:background="@color/colorPrimary"
+                             android:layout_alignParentRight="true"
+                             android:layout_alignParentEnd="true"/>
+
+            </RelativeLayout>
+
+            <!-- Divider-->
+            <View android:layout_width="match_parent"
+                  android:layout_margin="5dp"
+                  android:layout_height="1dp"
+                  android:background="@color/darker_gray"/>
+
+            <!-- Job Description-->
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:textAppearance="?attr/textAppearanceListItemSmall"
+                      android:text="Description: "
+                      android:id="@+id/description"
+                      android:gravity="center"
+                      android:textColor="@color/primary_text"
+                      android:layout_alignParentLeft="true"
+                      android:layout_alignParentStart="true"/>
+
+            <!-- Divider-->
+            <View android:layout_width="match_parent"
+                  android:layout_margin="5dp"
+                  android:layout_height="1dp"
+                  android:background="@color/darker_gray"/>
+
+            <!-- Job Type-->
+
+            <RelativeLayout android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                <TextView android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?attr/textAppearanceListItemSmall"
+                        android:text="Type: "
+                        android:id="@+id/typelbl"
+                          android:layout_centerVertical="true"
+                        android:gravity="center"
+                        android:textColor="@color/primary_text"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"/>
+
+                <TextView android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/type"
+                        android:layout_centerVertical="true"
+                        android:gravity="center"
+                        android:textColor="@color/primary_text"
+                        android:layout_toRightOf="@+id/typelbl"/>
+
+            </RelativeLayout>
+
+            <!-- Divider-->
+            <View android:layout_width="match_parent"
+                  android:layout_margin="5dp"
+                  android:layout_height="1dp"
+                  android:background="@color/darker_gray"/>
+
+            <!-- Relocation Assistance-->
+
+            <RelativeLayout android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:textAppearance="?attr/textAppearanceListItemSmall"
+                          android:text="Relocation assistance: "
+                          android:id="@+id/relocationlbl"
+                          android:gravity="center"
+                          android:layout_centerVertical="true"
+                          android:textColor="@color/primary_text"
+                          android:layout_alignParentLeft="true"
+                          android:layout_alignParentStart="true"/>
+
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:id="@+id/relocation"
+                          android:gravity="center"
+                          android:text="YES"
+                          android:layout_centerVertical="true"
+                          android:textColor="@color/primary_text"
+                          android:layout_toRightOf="@+id/relocationlbl"/>
+
+            </RelativeLayout>
+
+            <!-- Divider-->
+            <View android:layout_width="match_parent"
+                  android:layout_margin="5dp"
+                  android:layout_height="1dp"
+                  android:background="@color/darker_gray"/>
+
+            <!-- Posted date-->
+
+            <RelativeLayout android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:textAppearance="?attr/textAppearanceListItemSmall"
+                          android:text="Type: "
+                          android:id="@+id/postedlbl"
+                          android:gravity="center"
+                          android:layout_centerVertical="true"
+                          android:textColor="@color/primary_text"
+                          android:layout_alignParentLeft="true"
+                          android:layout_alignParentStart="true"/>
+
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:id="@+id/posted"
+                          android:layout_centerVertical="true"
+                          android:gravity="center"
+                          android:text="02/15/16"
+                          android:textColor="@color/primary_text"
+                          android:layout_toRightOf="@+id/postedlbl"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</RelativeLayout>
