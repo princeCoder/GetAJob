@@ -5,8 +5,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.princecoder.getajob.R;
 import com.princecoder.getajob.model.Job;
 
@@ -30,9 +32,8 @@ public class JobAdapterRecyclerView extends RecyclerView.Adapter<JobAdapterRecyc
     //Current element selected
     private int selectedItem=-1;
 
-    public JobAdapterRecyclerView(Context c, ArrayList<Job> jobs, ViewHolderOnClickHandler vh) {
+    public JobAdapterRecyclerView(Context c,ViewHolderOnClickHandler vh) {
         mContext = c;
-        mElements=jobs;
         mCallback=vh;
     }
 
@@ -41,6 +42,8 @@ public class JobAdapterRecyclerView extends RecyclerView.Adapter<JobAdapterRecyc
     public class ViewHolder extends RecyclerView.ViewHolder{
         public TextView mTitle;
         public TextView mLocation;
+        public TextView mCompany;
+        public ImageView mLogo;
 
         //The row index
         public int position;
@@ -49,6 +52,8 @@ public class JobAdapterRecyclerView extends RecyclerView.Adapter<JobAdapterRecyc
             super(view);
             mTitle = (TextView) view.findViewById(R.id.job_title);
             mLocation = (TextView) view.findViewById(R.id.job_location);
+            mCompany = (TextView) view.findViewById(R.id.company);
+            mLogo = (ImageView) view.findViewById(R.id.company_logo);
             view.setClickable(true);
 
         }
@@ -104,11 +109,23 @@ public class JobAdapterRecyclerView extends RecyclerView.Adapter<JobAdapterRecyc
     }
 
 
+    public ArrayList<Job> getElements() {
+        return mElements;
+    }
+
+    public void setElements(ArrayList<Job> mElements) {
+        this.mElements = mElements;
+    }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.mTitle.setText(mElements.get(position).getTitle());
+        holder.mCompany.setText(mElements.get(position).getCompanyName());
         holder.mLocation.setText(mElements.get(position).getLocation());
+        Glide.with(holder.mLogo.getContext())
+                .load(mElements.get(position).getCompanyLogo())
+                .fitCenter()
+                .into(holder.mLogo);
     }
 
 

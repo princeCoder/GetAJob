@@ -11,24 +11,20 @@
         android:layout_marginTop="@dimen/activity_horizontal_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/title_txt"
-            android:text="Title:"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:layout_height="wrap_content"/>
         <EditText
             android:id="@+id/title_edt"
-            android:layout_toRightOf="@+id/title_txt"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:layout_marginLeft="16dp"
-            android:hint="Title"
-            android:layout_width="wrap_content"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginStart="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:layout_marginEnd="@dimen/activity_vertical_margin"
+            android:gravity="left"
+            android:paddingLeft="@dimen/activity_vertical_margin"
+            android:paddingStart="@dimen/activity_vertical_margin"
+            android:hint="Job title or keyword"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </RelativeLayout>
 
@@ -37,24 +33,20 @@
         android:layout_marginTop="@dimen/activity_horizontal_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/location_txt"
-            android:text="Location:"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:layout_height="wrap_content"/>
         <EditText
             android:id="@+id/location_edt"
-            android:layout_toRightOf="@+id/location_txt"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:layout_marginLeft="16dp"
-            android:hint="Location"
-            android:layout_width="wrap_content"
+            android:gravity="left"
+            android:paddingLeft="@dimen/activity_vertical_margin"
+            android:paddingStart="@dimen/activity_vertical_margin"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginStart="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:layout_marginEnd="@dimen/activity_vertical_margin"
+            android:hint="Location (Click to choose location)"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </RelativeLayout>
 
@@ -66,8 +58,14 @@
         <Button
             android:id="@+id/search_btn"
             android:text="Search"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginStart="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:layout_marginEnd="@dimen/activity_vertical_margin"
+            android:background="@color/colorPrimary"
             android:layout_centerInParent="true"
-            android:layout_width="wrap_content"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </RelativeLayout>
 

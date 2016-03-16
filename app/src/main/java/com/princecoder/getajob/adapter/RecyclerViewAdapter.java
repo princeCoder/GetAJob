@@ -69,6 +69,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             super(view);
             jobTitle = (TextView) view.findViewById(R.id.job_title);
             jobLocation = (TextView) view.findViewById(R.id.job_location);
+
             view.setClickable(true);
             view.setOnClickListener(this);
         }

@@ -7,12 +7,8 @@ import android.util.Log;
 
 import com.princecoder.getajob.BuildConfig;
 import com.princecoder.getajob.model.Job;
-import com.princecoder.getajob.utils.L;
+import com.princecoder.getajob.parsers.JobJSONParser;
 import com.princecoder.getajob.utils.Utility;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,6 +32,8 @@ public class JobService extends IntentService{
     public static final String SAVE_JOB = "com.princecoder.sync.action.SAVE_JOB";
     public static final String SERVICE_JOBS = "SERVICE_JOBS";
     public static final String JOB_TAG = "JOB_TAG";
+
+    public ArrayList<Job> jobList=new ArrayList<>();
 
 
     public JobService() {
@@ -96,34 +94,39 @@ public class JobService extends IntentService{
             try{
                 final String AUTHENTIC_JOBS_BASE_URL =
                         "https://authenticjobs.com/api/?";
-                final String APPID_PARAM = "api_key";
+                final String APP_ID_PARAM = "api_key";
                 final String METHOD_PARAM = "aj.jobs.search";
+                final String PER_PAGE="50";
+                final String FORMAT="json";
 
                 Uri builtUri=null;
                 String locationid=Utility.getLocationId(job.getLocation());
                 if((locationid!=null)&&(!job.getTitle().isEmpty())){
                    builtUri = Uri.parse(AUTHENTIC_JOBS_BASE_URL).buildUpon()
-                            .appendQueryParameter(APPID_PARAM, BuildConfig.AUTHENTIC_JOBS__API_KEY)
+                            .appendQueryParameter(APP_ID_PARAM, BuildConfig.AUTHENTIC_JOBS__API_KEY) //This is how I get the API-Key from gradle
                             .appendQueryParameter("method", METHOD_PARAM)
                             .appendQueryParameter("keywords", job.getTitle())
                             .appendQueryParameter("location", locationid)
-                            .appendQueryParameter("format", "json")
-                            .build();
+                           .appendQueryParameter("perpage", PER_PAGE)
+                           .appendQueryParameter("format", FORMAT)
+                           .build();
                 }
-                else if(locationid==null){
+                else if(locationid==null) {
                     builtUri = Uri.parse(AUTHENTIC_JOBS_BASE_URL).buildUpon()
-                            .appendQueryParameter(APPID_PARAM, BuildConfig.AUTHENTIC_JOBS__API_KEY)
+                            .appendQueryParameter(APP_ID_PARAM, BuildConfig.AUTHENTIC_JOBS__API_KEY)
                             .appendQueryParameter("method", METHOD_PARAM)
                             .appendQueryParameter("keywords", job.getTitle())
-                            .appendQueryParameter("format", "json")
+                            .appendQueryParameter("perpage", PER_PAGE)
+                            .appendQueryParameter("format", FORMAT)
                             .build();
                 }
-                else if (job.getTitle().isEmpty()){
+                else if (job.getTitle().isEmpty()) {
                     builtUri = Uri.parse(AUTHENTIC_JOBS_BASE_URL).buildUpon()
-                            .appendQueryParameter(APPID_PARAM, BuildConfig.AUTHENTIC_JOBS__API_KEY)
+                            .appendQueryParameter(APP_ID_PARAM, BuildConfig.AUTHENTIC_JOBS__API_KEY)
                             .appendQueryParameter("method", METHOD_PARAM)
                             .appendQueryParameter("location", locationid)
-                            .appendQueryParameter("format", "json")
+                            .appendQueryParameter("perpage", PER_PAGE)
+                            .appendQueryParameter("format", FORMAT)
                             .build();
                 }
                 URL url = new URL(builtUri.toString());
@@ -158,17 +161,18 @@ public class JobService extends IntentService{
                     return;
                 }
                 jobsJsonStr = buffer.toString();
-                getJobsDataFromJson(jobsJsonStr);
+                jobList= (ArrayList<Job>) JobJSONParser.parseFeed(jobsJsonStr);
+
+                // We brodcast the response to the fragment
+                Intent intent = new Intent(SERVICE_JOBS);
+                intent.putParcelableArrayListExtra(JOB_TAG,jobList);
+                getApplicationContext().sendBroadcast(intent);
 
             }catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
                 // If the code didn't successfully get the weather data, there's no point in attempting
                 // to parse it.
                 //setLocationStatus(getContext(), LOCATION_STATUS_SERVER_DOWN);
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
-                e.printStackTrace();
-                //setLocationStatus(getContext(), LOCATION_STATUS_SERVER_INVALID);
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
@@ -192,73 +196,8 @@ public class JobService extends IntentService{
     }
 
 
-    private void getJobsDataFromJson(String forecastJsonStr)
-            throws JSONException {
-
-        // Job information
-        final String JOB_POST_ID = "id";
-        final String JOB_TITLE = "title";
-        final String JOB_DESCRIPTION = "description";
-        final String JOB_PERKS = "perks";
-        final String JOB_POSTDATE = "post_date";
-        final String JOB_RELOCATION_ASSISTANCE = "relocation_assistance";
-        final String JOB_LOCATION = "name";
-        final String JOB_COMPANY_LOGO = "logo";
-        final String JOB_COMPANY_NAME = "name";
-        final String JOB_KEYWORDS = "keywords";
-        final String JOB_URL = "url";
-        final String JOB_APPLY_URL = "apply_url";
-        final String JOB_COMPANY_TAG_LINE = "tagline";
-        final String COMPANY = "company";
-        final String LOCATION = "location";
-
-        try{
-            JSONObject jobsJson = new JSONObject(forecastJsonStr).getJSONObject("listings");
-            JSONArray jobsArray = jobsJson.getJSONArray("listing");
-
-            ArrayList<Job> jobArrayList = new ArrayList<Job>(jobsArray.length());
-
-
-            for(int i = 0; i < jobsArray.length(); i++) {
-                JSONObject jobObject=jobsArray.getJSONObject(i);
-                String postId=jobObject.getString(JOB_POST_ID);
-                String title=jobObject.getString(JOB_TITLE);
-                String description=jobObject.getString(JOB_DESCRIPTION);
-                String perks=jobObject.getString(JOB_PERKS);
-
-                String postdate=jobObject.getString(JOB_POSTDATE);
-                int relocationAssistance=jobObject.getInt(JOB_RELOCATION_ASSISTANCE);
-                String keywords=jobObject.getString(JOB_KEYWORDS);
-                String applyUrl=jobObject.getString(JOB_APPLY_URL);
-                String url=jobObject.getString(JOB_URL);
-
-                //Company Object
-                JSONObject company=jobObject.getJSONObject(COMPANY);
-                String location=company.getJSONObject(LOCATION).getString(JOB_LOCATION);
-                String companyName=company.getString(JOB_COMPANY_NAME);
-                String companyLogo=company.getString(JOB_COMPANY_LOGO);
-                String tagLine=company.getString(JOB_COMPANY_TAG_LINE);
-
-                Job job=new Job(postId,title,description
-                        ,perks,postdate,relocationAssistance
-                        ,location,companyName,companyLogo,keywords,url,applyUrl,tagLine);
-                jobArrayList.add(job);
-
-                // We brodcast the response to the fragment
-                Intent intent = new Intent(SERVICE_JOBS);
-                intent.putParcelableArrayListExtra(JOB_TAG,jobArrayList);
-                getApplicationContext().sendBroadcast(intent);
-            }
-        }catch (JSONException e) {
-            L.m(LOG_TAG, e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
     //Fetch jobs from Intenet
     private void fetchSavedJob(Job job) {
 
     }
-
-
 }
