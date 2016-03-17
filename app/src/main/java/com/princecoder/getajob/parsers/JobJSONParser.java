@@ -118,4 +118,27 @@ public class JobJSONParser {
         }
 
     }
+
+
+    public static int getPages(Context context, String content) {
+
+        // Job information
+        final String PAGES = "pages";
+        int pages=1;
+
+        try{
+            JSONObject jobsJson = new JSONObject(content).getJSONObject("listings");
+            if(jobsJson.has(PAGES)){
+                pages= jobsJson.getInt(PAGES);
+            }
+
+        }catch (JSONException e) {
+            L.m(LOG_TAG, e.getMessage());
+            e.printStackTrace();
+            return pages;
+        }
+        return pages;
+    }
+
+
 }

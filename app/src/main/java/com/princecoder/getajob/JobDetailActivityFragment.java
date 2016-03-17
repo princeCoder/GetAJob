@@ -1,5 +1,7 @@
 package com.princecoder.getajob;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -42,17 +44,6 @@ public class JobDetailActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView=inflater.inflate(R.layout.fragment_job_detail, container, false);
-        mCompanylogo= (ImageView) rootView.findViewById(R.id.company_logo);
-        mJobTitle=(TextView)rootView.findViewById(R.id.job_title);
-        mCompanyName=(TextView)rootView.findViewById(R.id.company);
-        mLocation=(TextView)rootView.findViewById(R.id.job_location);
-        mSaveButton=(Button)rootView.findViewById(R.id.save_btn);
-        mApplyButton=(Button)rootView.findViewById(R.id.apply_btn_btn);
-        mDescription=(TextView)rootView.findViewById(R.id.description);
-        mJobType=(TextView)rootView.findViewById(R.id.type);
-        mRelocationAssiatance=(TextView)rootView.findViewById(R.id.relocation);
-        mPostedDate=(TextView)rootView.findViewById(R.id.posted);
-
 
         if(savedInstanceState==null){
             mCurrentJob=getActivity().getIntent().getParcelableExtra("Job");
@@ -62,6 +53,25 @@ public class JobDetailActivityFragment extends Fragment {
                 mCurrentJob=savedInstanceState.getParcelable(CURRENT_JOB);
             }
         }
+
+        mCompanylogo= (ImageView) rootView.findViewById(R.id.company_logo);
+        mJobTitle=(TextView)rootView.findViewById(R.id.job_title);
+        mCompanyName=(TextView)rootView.findViewById(R.id.company);
+        mLocation=(TextView)rootView.findViewById(R.id.job_location);
+        mSaveButton=(Button)rootView.findViewById(R.id.save_btn);
+        mApplyButton=(Button)rootView.findViewById(R.id.apply_btn_btn);
+        mApplyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(mCurrentJob.getApplyUrl()));
+                startActivity(i);
+            }
+        });
+        mDescription=(TextView)rootView.findViewById(R.id.description);
+        mJobType=(TextView)rootView.findViewById(R.id.type);
+        mRelocationAssiatance=(TextView)rootView.findViewById(R.id.relocation);
+        mPostedDate=(TextView)rootView.findViewById(R.id.posted);
 
         bindData();
 

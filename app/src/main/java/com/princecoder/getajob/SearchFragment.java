@@ -2,8 +2,10 @@ package com.princecoder.getajob;
 
 
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -22,6 +24,7 @@ import android.widget.ListView;
 
 import com.princecoder.getajob.model.Job;
 import com.princecoder.getajob.model.JobModel;
+import com.princecoder.getajob.sync.JobService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +42,8 @@ public class SearchFragment extends Fragment {
     private ViewPager mViewPager;
     private FragmentPagerAdapter mAdapterViewPager;
     private Toolbar mToolbar;
+    private int mNumPage;
+    private Job mJob;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -47,6 +52,9 @@ public class SearchFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //register the receiver
+        getActivity().registerReceiver(mServicePagesReceiver,
+                new IntentFilter(JobService.SERVICE_PAGES));
     }
 
     @Override
@@ -86,6 +94,12 @@ public class SearchFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //Unregister the brodcast receiver
+        getActivity().unregisterReceiver(mServicePagesReceiver);
+    }
 
     public void searchCitiesList() {
         final Dialog dialog = new Dialog(getActivity());
@@ -121,20 +135,39 @@ public class SearchFragment extends Fragment {
     //Search Jobs
 
     public void searchJobs() {
+
+        //Get input data
         String title = mTitleEdt.getText().toString();
         String location = mLocation.getText().toString();
 
         //Create job object
-        Job job = new Job();
-        job.setTitle(title);
-        job.setLocation(location);
+        mJob = new Job();
+        mJob.setTitle(title);
+        mJob.setLocation(location);
 
+        // We question the Service to get the number of pages
+        Intent intent = new Intent(getActivity(), JobService.class);
+        intent.setAction(JobService.FETCH_PAGES_FROM_INTERNET);
+        intent.putExtra(JobsFragment.JOB_TAG, mJob);
+        getActivity().startService(intent);
 
-        //Start new activity
-        Intent intent1 = new Intent(getActivity(), ListJobActivity.class);
-        intent1.putExtra(JobsFragment.JOB_TAG, job);
-        getActivity().startActivity(intent1);
     }
+
+
+    private BroadcastReceiver mServicePagesReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (JobService.SERVICE_PAGES.equals(intent.getAction())) {
+                mNumPage=intent.getIntExtra(JobService.PAGE_TAG,1);
+                //Start new activity
+                Intent intent1 = new Intent(getActivity(), ListJobActivity.class);
+                intent1.putExtra(JobsFragment.JOB_TAG, mJob);
+                intent1.putExtra(ListJobsFragment.NUM_PAGE_TAG, mNumPage);
+                getActivity().startActivity(intent1);
+
+            }
+        }
+    };
 
 
     public static class MyPagerAdapter extends FragmentPagerAdapter {

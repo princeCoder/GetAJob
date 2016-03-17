@@ -17,16 +17,17 @@ import android.view.ViewGroup;
 public class ListJobsFragment extends Fragment {
 
     //Number of page
-    private static  int NUM_PAGE=3;
+    private static  int NUM_PAGE=1;
 
     //Num Page Tag
-    private static String NUM_PAGE_TAG="NUM_PAGE";
+    public static String NUM_PAGE_TAG="NUM_PAGE";
 
     //ViewPager
     private ViewPager mViewPager;
 
     //Selected Page
     private int mSelectedItemId=2;
+
 
     public ListJobsFragment() {
         // Required empty public constructor
@@ -38,6 +39,10 @@ public class ListJobsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView= inflater.inflate(R.layout.fragment_list_jobs, container, false);
+
+        //Set up the number of pages
+        NUM_PAGE=getActivity().getIntent().getIntExtra(NUM_PAGE_TAG,1);
+
         mViewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
         mViewPager.setAdapter(new MyAdapter(getFragmentManager()));
 
@@ -62,9 +67,6 @@ public class ListJobsFragment extends Fragment {
 
         });
 
-        //Set up the number of pages
-        //NUM_PAGE=getActivity().getIntent().getIntExtra(NUM_PAGE_TAG,1);
-
         if (savedInstanceState == null) {
                 mSelectedItemId = 1;
 
@@ -82,6 +84,7 @@ public class ListJobsFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putInt("defaultpage",mSelectedItemId);
     }
+
 
     public static class MyAdapter extends FragmentStatePagerAdapter {
         public MyAdapter(FragmentManager fm) {
