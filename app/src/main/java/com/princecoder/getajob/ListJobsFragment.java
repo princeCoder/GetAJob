@@ -2,6 +2,7 @@ package com.princecoder.getajob;
 
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -77,6 +78,14 @@ public class ListJobsFragment extends Fragment {
 
 //        mViewPager.setCurrentItem(mSelectedItemId);
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(NUM_PAGE==0){
+            Snackbar.make(getView(), "No job found ", Snackbar.LENGTH_LONG).show();
+        }
     }
 
     @Override

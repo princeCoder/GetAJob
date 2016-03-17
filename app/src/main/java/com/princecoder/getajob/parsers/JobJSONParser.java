@@ -51,7 +51,7 @@ public class JobJSONParser {
         String description="";
         String perks="";
         String location="";
-        String postdate="";
+        long postdate=0;
         int relocationAssistance=0;
         String keywords="";
         String applyUrl="";
@@ -75,7 +75,8 @@ public class JobJSONParser {
                 title=jobObject.has(JOB_TITLE)?jobObject.getString(JOB_TITLE):"";
                 description=jobObject.has(JOB_DESCRIPTION)?jobObject.getString(JOB_DESCRIPTION):"";
                 perks=jobObject.has(JOB_PERKS)?jobObject.getString(JOB_PERKS):"";
-                postdate=jobObject.has(JOB_POSTDATE)?jobObject.getString(JOB_POSTDATE):"";
+                String date=jobObject.has(JOB_POSTDATE)?jobObject.getString(JOB_POSTDATE):"";
+                postdate=Utility.convertStringToDateMilliseconds(date);
                 relocationAssistance=jobObject.has(JOB_RELOCATION_ASSISTANCE)?jobObject.getInt(JOB_RELOCATION_ASSISTANCE):0;
                 keywords=jobObject.has(JOB_KEYWORDS)?jobObject.getString(JOB_KEYWORDS):"";
                 applyUrl=jobObject.has(JOB_APPLY_URL)?jobObject.getString(JOB_APPLY_URL):"";

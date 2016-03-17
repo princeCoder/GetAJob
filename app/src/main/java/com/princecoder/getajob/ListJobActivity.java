@@ -34,7 +34,7 @@ public class ListJobActivity extends AppCompatActivity implements JobsFragment.O
     public void onJobSelectedListener(Job job) {
         if(job!=null){
             Intent intent = new Intent(this, JobDetailActivity.class)
-                    .putExtra("Job", job);
+                    .putExtra(JobDetailActivityFragment.CURRENT_JOB, job);
             startActivity(intent);
         }
     }

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.princecoder.getajob.R;
 import com.princecoder.getajob.model.Job;
+import com.princecoder.getajob.utils.Utility;
 
 import java.util.ArrayList;
 
@@ -43,6 +44,7 @@ public class JobAdapterRecyclerView extends RecyclerView.Adapter<JobAdapterRecyc
         public TextView mTitle;
         public TextView mLocation;
         public TextView mCompany;
+        public TextView mDate;
         public ImageView mLogo;
 
         //The row index
@@ -53,6 +55,7 @@ public class JobAdapterRecyclerView extends RecyclerView.Adapter<JobAdapterRecyc
             mTitle = (TextView) view.findViewById(R.id.job_title);
             mLocation = (TextView) view.findViewById(R.id.job_location);
             mCompany = (TextView) view.findViewById(R.id.company);
+            mDate = (TextView) view.findViewById(R.id.job_posted_date);
             mLogo = (ImageView) view.findViewById(R.id.company_logo);
             view.setClickable(true);
 
@@ -124,6 +127,7 @@ public class JobAdapterRecyclerView extends RecyclerView.Adapter<JobAdapterRecyc
         holder.mTitle.setText(mElements.get(position).getTitle());
         holder.mCompany.setText(mElements.get(position).getCompanyName());
         holder.mLocation.setText(mElements.get(position).getLocation());
+        holder.mDate.setText(Utility.getDayDifference(mContext, mElements.get(position).getPostDate()));
         Glide.with(holder.mLogo.getContext())
                 .load(mElements.get(position).getCompanyLogo())
                 .fitCenter()

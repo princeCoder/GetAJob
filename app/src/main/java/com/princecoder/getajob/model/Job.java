@@ -11,7 +11,7 @@ public class Job implements Parcelable{
     private String title;
     private String description;
     private String perks;
-    private String postDate;
+    private long postDate;
     private int relocationAssistance;
     private String location;
     private String companyName;
@@ -21,7 +21,7 @@ public class Job implements Parcelable{
     private String applyUrl;
     private String companyTagLine;
     private String jobType;
-    public Job(String id, String title, String description, String perks, String postDate, int relocationAssistance, String location, String companyName, String companyLogo, String keywords, String url, String applyUrl, String companyTagLine, String jobType) {
+    public Job(String id, String title, String description, String perks, long postDate, int relocationAssistance, String location, String companyName, String companyLogo, String keywords, String url, String applyUrl, String companyTagLine, String jobType) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -45,7 +45,7 @@ public class Job implements Parcelable{
         this.title = null;
         this.description = null;
         this.perks = null;
-        this.postDate = null;
+        this.postDate=0;
         this.relocationAssistance = 0;
         this.location = null;
         this.companyName = null;
@@ -63,7 +63,7 @@ public class Job implements Parcelable{
         title = in.readString();
         description = in.readString();
         perks = in.readString();
-        postDate = in.readString();
+        postDate = in.readLong();
         relocationAssistance = in.readInt();
         location = in.readString();
         companyName = in.readString();
@@ -119,11 +119,11 @@ public class Job implements Parcelable{
         this.perks = perks;
     }
 
-    public String getPostDate() {
+    public long getPostDate() {
         return postDate;
     }
 
-    public void setPostDate(String postDate) {
+    public void setPostDate(long postDate) {
         this.postDate = postDate;
     }
 
@@ -211,7 +211,7 @@ public class Job implements Parcelable{
         parcel.writeString(title);
         parcel.writeString(description);
         parcel.writeString(perks);
-        parcel.writeString(postDate);
+        parcel.writeLong(postDate);
         parcel.writeInt(relocationAssistance);
         parcel.writeString(location);
         parcel.writeString(companyName);

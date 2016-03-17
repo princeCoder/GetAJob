@@ -196,7 +196,7 @@ public class JobsFragment extends Fragment {
                     mProgressBar.setVisibility(View.GONE);
                     mAdapter.swapElements(mJobList);
                     if(mJobList!=null && mJobList.size()==0){ //We display a message in the snackBar
-                        Snackbar.make(getView(), "No job found in that location", Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(getView(), "No job found", Snackbar.LENGTH_LONG).show();
                     }
                 }
             }

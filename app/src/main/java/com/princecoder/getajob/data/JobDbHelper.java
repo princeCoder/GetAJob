@@ -29,7 +29,7 @@ public class JobDbHelper extends SQLiteOpenHelper{
                 JobContract.JobEntry.LOCATION + " TEXT NOT NULL," +
                 JobContract.JobEntry.DESC + " TEXT ," +
                 JobContract.JobEntry.PERKS + " TEXT, " +
-                JobContract.JobEntry.POST_DATE + "  INTEGER" +
+                JobContract.JobEntry.POST_DATE + "  INTEGER NOT NULL, " +
                 JobContract.JobEntry.RELOCATION_ASSISTANCE + " INTEGER NOT NULL, " +
                 JobContract.JobEntry.COMPANY_NAME + " TEXT, " +
                 JobContract.JobEntry.KEYWORDS + " TEXT, " +

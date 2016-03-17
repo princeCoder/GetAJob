@@ -29,6 +29,7 @@ public class AboutFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView=inflater.inflate(R.layout.fragment_about, container, false);
         TextView city= (TextView) rootView.findViewById(R.id.city);
+
         return rootView;
 
     }

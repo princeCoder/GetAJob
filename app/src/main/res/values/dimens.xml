@@ -32,7 +32,7 @@
     <!-- Metrics-->
     <dimen name="vertical_margin">16dp</dimen>
     <dimen name="horizontal_margin">16dp</dimen>
-    <dimen name="list_item_height">92dp</dimen>
+    <dimen name="list_item_height">112dp</dimen>
     <dimen name="list_item_margin">8dp</dimen>
     <dimen name="toolbar_min_height">56dp</dimen>
     <dimen name="collapsed_toolbar_height">128dp</dimen>
