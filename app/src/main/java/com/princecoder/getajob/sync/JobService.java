@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 
 import com.princecoder.getajob.BuildConfig;
+import com.princecoder.getajob.JobsFragment;
 import com.princecoder.getajob.model.Job;
 import com.princecoder.getajob.parsers.JobJSONParser;
 import com.princecoder.getajob.utils.Utility;
@@ -50,8 +51,10 @@ public class JobService extends IntentService{
 
             if (FETCH_JOB_FROM_INTERNET.equals(action)) {
 
+                int numPage=intent.getIntExtra(JobsFragment.NUM_PAGE,1);
+
                 //Fetch the Job from Internet
-                fetchJobFromInternet(job);
+                fetchJobFromInternet(job,numPage);
 
             } else if (FETCH_SAVED_JOB.equals(action)) {
 
@@ -80,7 +83,7 @@ public class JobService extends IntentService{
     }
 
     //Fetch jobs from Intenet
-    private void fetchJobFromInternet(Job job) {
+    private synchronized void fetchJobFromInternet(Job job, int pageNumber) {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
@@ -94,8 +97,9 @@ public class JobService extends IntentService{
                         "https://authenticjobs.com/api/?";
                 final String APP_ID_PARAM = "api_key";
                 final String METHOD_PARAM = "aj.jobs.search";
-                final String PER_PAGE="50";
+                final String PER_PAGE="25";
                 final String FORMAT="json";
+                final String PAGE="page";
 
                 Uri builtUri=null;
                 String locationid=Utility.getLocationId(job.getLocation());
@@ -106,6 +110,7 @@ public class JobService extends IntentService{
                             .appendQueryParameter("keywords", job.getTitle())
                             .appendQueryParameter("location", locationid)
                             .appendQueryParameter("perpage", PER_PAGE)
+                            .appendQueryParameter(PAGE, ""+pageNumber)
                             .appendQueryParameter("format", FORMAT)
                             .build();
                 }
@@ -115,6 +120,7 @@ public class JobService extends IntentService{
                             .appendQueryParameter("method", METHOD_PARAM)
                             .appendQueryParameter("keywords", job.getTitle())
                             .appendQueryParameter("perpage", PER_PAGE)
+                            .appendQueryParameter(PAGE, ""+pageNumber)
                             .appendQueryParameter("format", FORMAT)
                             .build();
                 }
@@ -124,6 +130,7 @@ public class JobService extends IntentService{
                             .appendQueryParameter("method", METHOD_PARAM)
                             .appendQueryParameter("location", locationid)
                             .appendQueryParameter("perpage", PER_PAGE)
+                            .appendQueryParameter(PAGE, ""+pageNumber)
                             .appendQueryParameter("format", FORMAT)
                             .build();
                 }
@@ -145,7 +152,12 @@ public class JobService extends IntentService{
                 // We brodcast the response to the fragment
                 Intent intent = new Intent(SERVICE_JOBS);
                 intent.putParcelableArrayListExtra(JOB_TAG,jobList);
+                // This is to make the diference on intents.
+                // In this case, No matter how many broadcast I'm using, I will always have different intents.
+                intent.putExtra(JobsFragment.NUM_PAGE,pageNumber);
                 getApplicationContext().sendBroadcast(intent);
+
+
             }catch (ProtocolException e) {
                 e.printStackTrace();
             }

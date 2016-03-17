@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,7 @@ public class SearchFragment extends Fragment {
     private Button mSearchBtn;
     private ViewPager mViewPager;
     private FragmentPagerAdapter mAdapterViewPager;
+    private Toolbar mToolbar;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -130,7 +132,7 @@ public class SearchFragment extends Fragment {
 
         //Start new activity
         Intent intent1 = new Intent(getActivity(), ListJobActivity.class);
-        intent1.putExtra(ListJobsFragment.JOB_TAG, job);
+        intent1.putExtra(JobsFragment.JOB_TAG, job);
         getActivity().startActivity(intent1);
     }
 

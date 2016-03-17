@@ -10,7 +10,7 @@ import android.view.View;
 
 import com.princecoder.getajob.model.Job;
 
-public class ListJobActivity extends AppCompatActivity implements ListJobsFragment.OnJobSelectedListener{
+public class ListJobActivity extends AppCompatActivity implements JobsFragment.OnJobSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
