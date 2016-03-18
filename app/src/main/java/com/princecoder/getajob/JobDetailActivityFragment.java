@@ -1,8 +1,12 @@
 package com.princecoder.getajob;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -14,6 +18,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.princecoder.getajob.model.Job;
+import com.princecoder.getajob.sync.JobService;
 import com.princecoder.getajob.utils.Utility;
 
 /**
@@ -21,7 +26,7 @@ import com.princecoder.getajob.utils.Utility;
  */
 public class JobDetailActivityFragment extends Fragment {
 
-    private Job mCurrentJob;
+
     private ImageView mCompanylogo;
     private TextView mJobTitle;
     private TextView mLocation;
@@ -38,9 +43,18 @@ public class JobDetailActivityFragment extends Fragment {
     //Job Tag
     public static final String CURRENT_JOB="CURRENT_JOB";
 
-
+    //Current job
+    private Job mCurrentJob;
 
     public JobDetailActivityFragment() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //register the receiver
+        getActivity().registerReceiver(mServiceSaveJobReceiver,
+                new IntentFilter(JobService.SAVE_JOB));
     }
 
     @Override
@@ -62,6 +76,12 @@ public class JobDetailActivityFragment extends Fragment {
         mCompanyName=(TextView)rootView.findViewById(R.id.company);
         mLocation=(TextView)rootView.findViewById(R.id.job_location);
         mSaveButton=(Button)rootView.findViewById(R.id.save_btn);
+        mSaveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveJob(mCurrentJob);
+            }
+        });
         mApplyButton=(Button)rootView.findViewById(R.id.apply_btn_btn);
         mApplyButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,6 +101,15 @@ public class JobDetailActivityFragment extends Fragment {
         return rootView;
     }
 
+    //Save the current job in the database
+    private void saveJob(Job job) {
+        Intent bookIntent = new Intent(getActivity(), JobService.class);
+        bookIntent.putExtra(JobService.JOB_TAG, job);
+        bookIntent.setAction(JobService.SAVE_JOB);
+        getActivity().startService(bookIntent);
+
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -92,6 +121,13 @@ public class JobDetailActivityFragment extends Fragment {
                 getActivityCast().onBackPressed();
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //Unregister the brodcast receiver
+        getActivity().unregisterReceiver(mServiceSaveJobReceiver);
     }
 
     public JobDetailActivity getActivityCast() {
@@ -119,4 +155,15 @@ public class JobDetailActivityFragment extends Fragment {
         mPostedDate.setText(Utility.getFormattedMonthDayYear(getActivity(), mCurrentJob.getPostDate()));
         mKeywords.setText(mCurrentJob.getKeywords());
     }
+
+    private BroadcastReceiver mServiceSaveJobReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (JobService.SAVE_JOB.equals(intent.getAction())) {
+                String message = intent.getStringExtra(JobService.MESSAGE);
+                Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
+            }
+        }
+    };
+
 }

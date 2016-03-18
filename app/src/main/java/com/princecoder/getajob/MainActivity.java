@@ -1,6 +1,7 @@
 package com.princecoder.getajob;
 
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -15,8 +16,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.princecoder.getajob.model.Job;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, SavedJobFragment.OnJobSelectedListener {
 
     private String[] mDrawerTitles;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -154,4 +157,12 @@ public class MainActivity extends AppCompatActivity
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
+    @Override
+    public void onJobSelectedListener(Job job) {
+        if(job!=null){
+            Intent intent = new Intent(this, JobDetailActivity.class)
+                    .putExtra(JobDetailActivityFragment.CURRENT_JOB, job);
+            startActivity(intent);
+        }
+    }
 }

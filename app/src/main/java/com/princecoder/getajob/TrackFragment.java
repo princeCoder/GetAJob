@@ -1,7 +1,6 @@
 package com.princecoder.getajob;
 
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -11,6 +10,9 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -31,49 +33,49 @@ public class TrackFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView= inflater.inflate(R.layout.fragment_track, container, false);
         mViewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
-        mViewPager.setAdapter(new MyPagerAdapter(getFragmentManager(), getActivity()));
+        mViewPager.setAdapter(new MyPagerAdapter(getFragmentManager()));
+
+        if (mViewPager != null) {
+            setupViewPager(mViewPager);
+        }
 
         // Give the TabLayout the ViewPager
         TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        mViewPager.setCurrentItem(1);
         return rootView;
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        MyPagerAdapter adapter = new MyPagerAdapter(getFragmentManager());
+        adapter.addFragment(new SeenFragment());
+        adapter.addFragment(new SavedJobFragment());
+        viewPager.setAdapter(adapter);
     }
 
     public static class MyPagerAdapter extends FragmentPagerAdapter {
 
-        final int PAGE_COUNT = 2;
-        private String tabTitles[] = new String[] { "Saved", "Recent"};
-        private Context context;
+        private String tabTitles[] = new String[] { "Recent", "Saved"};
+        private final List<Fragment> mFragments = new ArrayList<>();
 
-        public MyPagerAdapter(FragmentManager fm, Context context) {
+        public MyPagerAdapter(FragmentManager fm) {
             super(fm);
-            this.context = context;
         }
 
-
-        public MyPagerAdapter(FragmentManager fragmentManager) {
-            super(fragmentManager);
+        public void addFragment(Fragment fragment) {
+            mFragments.add(fragment);
         }
 
         // Returns total number of pages
         @Override
         public int getCount() {
-            return PAGE_COUNT;
+            return mFragments.size();
         }
 
         // Returns the fragment to display for that page
         @Override
         public Fragment getItem(int position) {
-            switch (position) {
-                case 0: // Fragment # 0 - This will show FirstFragment
-                    return SavedJobFragment.newInstance();
-                case 1: // Fragment # 0 - This will show FirstFragment different title
-                    return RecentFragment.newInstance();
-                default:
-                    return null;
-            }
+            return mFragments.get(position);
         }
 
         // Returns the page title for the top indicator

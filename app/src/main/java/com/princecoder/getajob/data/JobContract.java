@@ -15,10 +15,11 @@ public class JobContract {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
 
+    //For the table Job
     public static final class JobEntry implements BaseColumns {
 
         //Table name
-        public static final String TABLE_JOBS = "job";
+        public static final String TABLE_JOBS = "jobs";
         // create content uri
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_JOBS).build();
 
@@ -30,8 +31,6 @@ public class JobContract {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE +"/" + CONTENT_AUTHORITY + "/" + TABLE_JOBS;
 
         public static final String TABLE_NAME = "jobs";
-
-        public static final String POST_ID = "id";
 
         public static final String TITLE = "title";
 
@@ -62,6 +61,34 @@ public class JobContract {
 
         // for building URIs on insertion
         public static Uri buildJobUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+    }
+
+    //For the table recents
+    public static final class RecentEntry implements BaseColumns {
+
+        //Table name
+        public static final String TABLE_RECENTS = "recent";
+        // create content uri
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_RECENTS).build();
+
+        // create cursor of base type directory for multiple entries
+        public static final String CONTENT_DIR_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + TABLE_RECENTS;
+
+        // create cursor of base type item for single entry
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE +"/" + CONTENT_AUTHORITY + "/" + TABLE_RECENTS;
+
+        public static final String TABLE_NAME = "recent";
+
+        public static final String TITLE = "title";
+
+        public static final String LOCATION = "location";
+
+
+        // for building URIs on insertion
+        public static Uri buildRecentUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
     }

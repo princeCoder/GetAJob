@@ -1,11 +1,14 @@
 package com.princecoder.getajob.sync;
 
 import android.app.IntentService;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 
 import com.princecoder.getajob.BuildConfig;
 import com.princecoder.getajob.JobsFragment;
+import com.princecoder.getajob.data.JobContract;
 import com.princecoder.getajob.model.Job;
 import com.princecoder.getajob.parsers.JobJSONParser;
 import com.princecoder.getajob.utils.Utility;
@@ -33,8 +36,16 @@ public class JobService extends IntentService{
     public static final String SAVE_JOB = "com.princecoder.sync.action.SAVE_JOB";
     public static final String SERVICE_JOBS = "SERVICE_JOBS";
     public static final String SERVICE_PAGES = "SERVICE_PAGES";
+
+    // Job tag
     public static final String JOB_TAG = "JOB_TAG";
+
+    //Page number tag
     public static final String PAGE_TAG = "PAGE_TAG";
+
+    //Message  tag
+    public static final String MESSAGE = "MESSAGE";
+
 
     private final String AUTHENTIC_JOBS_BASE_URL =
             "https://authenticjobs.com/api/?";
@@ -81,16 +92,63 @@ public class JobService extends IntentService{
                 //We delete the job
                 deleteJob(job);
             } else if (SAVE_JOB.equals(action)){
+                String message;
+                if(!isJobFound(job.getId())){
+                    //We save the Job
+                    saveJob(job);
+                }
+                else{
+                    // We brodcast the response to the fragment
+                    Intent saveIntent = new Intent(SAVE_JOB);
+                    saveIntent.putExtra(MESSAGE,"Job already saved");
+                    getApplicationContext().sendBroadcast(saveIntent);
+                }
 
-                //We save the Job
-                saveJob(job);
             }
         }
     }
 
+    /**
+     * check if a provided Job id already exist
+     * @param id
+     * @return
+     */
+    private boolean isJobFound(String id){
+        Cursor jobEntry = getContentResolver().query(
+                JobContract.JobEntry.buildJobUri(Long.parseLong(id)),
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                null  // sort order
+        );
+
+        boolean found= jobEntry.getCount()>0?true:false;
+        jobEntry.close();
+        return found;
+    }
+
     //Save Job in the database
     private void saveJob(Job job){
-
+        ContentValues values= new ContentValues();
+        values.put(JobContract.JobEntry._ID, job.getId());
+        values.put(JobContract.JobEntry.TITLE,job.getTitle());
+        values.put(JobContract.JobEntry.COMPANY_LOGO,job.getCompanyLogo());
+        values.put(JobContract.JobEntry.LOCATION,job.getLocation());
+        values.put(JobContract.JobEntry.DESC,job.getDescription());
+        values.put(JobContract.JobEntry.PERKS,job.getPerks());
+        values.put(JobContract.JobEntry.POST_DATE,job.getPostDate());
+        values.put(JobContract.JobEntry.RELOCATION_ASSISTANCE,job.getRelocationAssistance());
+        values.put(JobContract.JobEntry.COMPANY_NAME,job.getCompanyName());
+        values.put(JobContract.JobEntry.KEYWORDS,job.getKeywords());
+        values.put(JobContract.JobEntry.URL,job.getUrl());
+        values.put(JobContract.JobEntry.APPLY_URL,job.getApplyUrl());
+        values.put(JobContract.JobEntry.COMPANY_TAG_LINE,job.getCompanyTagLine());
+        values.put(JobContract.JobEntry.TYPE,job.getJobType());
+                getContentResolver().insert(JobContract.JobEntry.CONTENT_URI, values);
+        // We brodcast the response to the fragment
+        Intent saveIntent = new Intent(SAVE_JOB);
+        saveIntent.putExtra(MESSAGE, "Job saved");
+        getApplicationContext().sendBroadcast(saveIntent);
     }
 
     //Delete the job in the database
@@ -166,7 +224,6 @@ public class JobService extends IntentService{
                 // In this case, No matter how many broadcast I'm using, I will always have different intents.
                 intent.putExtra(JobsFragment.NUM_PAGE,pageNumber);
                 getApplicationContext().sendBroadcast(intent);
-
 
             }catch (ProtocolException e) {
                 e.printStackTrace();

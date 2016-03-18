@@ -26,6 +26,9 @@ public class JobProvider extends ContentProvider {
     // Codes for the UriMatcher
     private static final int JOB = 100;
     private static final int JOB_WITH_ID = 101;
+    // Codes for the UriMatcher
+    private static final int RECENT = 102;
+    private static final int RECENT_WITH_ID = 103;
     public Context context;
 
 
@@ -38,6 +41,9 @@ public class JobProvider extends ContentProvider {
         // add a code for each type of URI you want
         matcher.addURI(authority, JobContract.JobEntry.TABLE_JOBS, JOB);
         matcher.addURI(authority, JobContract.JobEntry.TABLE_JOBS + "/#", JOB_WITH_ID);
+
+        matcher.addURI(authority, JobContract.RecentEntry.TABLE_RECENTS, RECENT);
+        matcher.addURI(authority, JobContract.RecentEntry.TABLE_RECENTS + "/#", RECENT_WITH_ID);
 
         return matcher;
     }
@@ -54,7 +60,7 @@ public class JobProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         Cursor retCursor;
         switch(sUriMatcher.match(uri)){
-            // All Flavors selected
+            // All Jobs selected
             case JOB:{
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         JobContract.JobEntry.TABLE_JOBS,
@@ -66,12 +72,36 @@ public class JobProvider extends ContentProvider {
                         sortOrder);
                 return retCursor;
             }
-            // Individual flavor based on Id selected
+            // Individual job based on Id selected
             case JOB_WITH_ID:{
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         JobContract.JobEntry.TABLE_JOBS,
                         projection,
                         JobContract.JobEntry._ID + " = ?",
+                        new String[] {String.valueOf(ContentUris.parseId(uri))},
+                        null,
+                        null,
+                        sortOrder);
+                return retCursor;
+            }
+            // All Recents search selected
+            case RECENT:{
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        JobContract.RecentEntry.TABLE_RECENTS,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                return retCursor;
+            }
+            // Individual recent search based on Id selected
+            case RECENT_WITH_ID:{
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        JobContract.RecentEntry.TABLE_RECENTS,
+                        projection,
+                        JobContract.RecentEntry._ID + " = ?",
                         new String[] {String.valueOf(ContentUris.parseId(uri))},
                         null,
                         null,
@@ -97,6 +127,12 @@ public class JobProvider extends ContentProvider {
             case JOB_WITH_ID:{
                 return JobContract.JobEntry.CONTENT_ITEM_TYPE;
             }
+            case RECENT:{
+                return JobContract.RecentEntry.CONTENT_DIR_TYPE;
+            }
+            case RECENT_WITH_ID:{
+                return JobContract.RecentEntry.CONTENT_ITEM_TYPE;
+            }
             default:{
                 throw new UnsupportedOperationException(context.getString(R.string.unknown_uri) + uri);
             }
@@ -119,7 +155,16 @@ public class JobProvider extends ContentProvider {
                 }
                 break;
             }
-
+            case RECENT: {
+                long _id = db.insert(JobContract.RecentEntry.TABLE_RECENTS, null, contentValues);
+                // insert unless it is already contained in the database
+                if (_id > 0) {
+                    returnUri = JobContract.RecentEntry.buildRecentUri(_id);
+                } else {
+                    throw new android.database.SQLException(context.getString(R.string.db_insertion_error) + uri);
+                }
+                break;
+            }
             default: {
                 throw new UnsupportedOperationException(context.getString(R.string.unknown_uri) + uri);
 
@@ -128,7 +173,6 @@ public class JobProvider extends ContentProvider {
         getContext().getContentResolver().notifyChange(uri, null);
         return returnUri;
     }
-
 
 
     @Override
@@ -141,7 +185,7 @@ public class JobProvider extends ContentProvider {
                 db.beginTransaction();
 
                 // keep track of successful inserts
-                int numInserted = 0;
+                int numJobInserted = 0;
                 try{
                     for(ContentValues value : values){
                         if (value == null){
@@ -150,6 +194,43 @@ public class JobProvider extends ContentProvider {
                         long _id = -1;
                         try{
                             _id = db.insertOrThrow(JobContract.JobEntry.TABLE_JOBS,
+                                    null, value);
+                        }catch(SQLiteConstraintException e) {
+                            L.m(LOG_TAG, context.getString(R.string.db_redondance_error));
+                        }
+                        if (_id != -1){
+                            numJobInserted++;
+                        }
+                    }
+                    if(numJobInserted > 0){
+                        // If no errors, declare a successful transaction.
+                        // database will not populate if this is not called
+                        db.setTransactionSuccessful();
+                    }
+                } finally {
+                    // all transactions occur at once
+                    db.endTransaction();
+                }
+                if (numJobInserted > 0){
+                    // if there was successful insertion, notify the content resolver that there
+                    // was a change
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                return numJobInserted;
+            case RECENT:
+                // allows for multiple transactions
+                db.beginTransaction();
+
+                // keep track of successful inserts
+                int numInserted = 0;
+                try{
+                    for(ContentValues value : values){
+                        if (value == null){
+                            throw new IllegalArgumentException(context.getString(R.string.db_update_error));
+                        }
+                        long _id = -1;
+                        try{
+                            _id = db.insertOrThrow(JobContract.RecentEntry.TABLE_RECENTS,
                                     null, value);
                         }catch(SQLiteConstraintException e) {
                             L.m(LOG_TAG, context.getString(R.string.db_redondance_error));
@@ -200,6 +281,22 @@ public class JobProvider extends ContentProvider {
                         JobContract.JobEntry.TABLE_JOBS + "'");
 
                 break;
+            case RECENT:
+                numDeleted = db.delete(
+                        JobContract.RecentEntry.TABLE_RECENTS, selection, selectionArgs);
+                // reset _ID
+                db.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" +
+                        JobContract.RecentEntry.TABLE_RECENTS + "'");
+                break;
+            case RECENT_WITH_ID:
+                numDeleted = db.delete(JobContract.RecentEntry.TABLE_RECENTS,
+                        JobContract.JobEntry._ID + " = ?",
+                        new String[]{String.valueOf(ContentUris.parseId(uri))});
+                // reset _ID
+                db.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" +
+                        JobContract.RecentEntry.TABLE_RECENTS + "'");
+
+                break;
             default:
                 throw new UnsupportedOperationException(context.getString(R.string.unknown_uri) + uri);
         }
@@ -230,6 +327,20 @@ public class JobProvider extends ContentProvider {
                 numUpdated = db.update(JobContract.JobEntry.TABLE_JOBS,
                         contentValues,
                         JobContract.JobEntry._ID + " = ?",
+                        new String[] {String.valueOf(ContentUris.parseId(uri))});
+                break;
+            }
+            case RECENT:{
+                numUpdated = db.update(JobContract.RecentEntry.TABLE_RECENTS,
+                        contentValues,
+                        selection,
+                        selectionArgs);
+                break;
+            }
+            case RECENT_WITH_ID: {
+                numUpdated = db.update(JobContract.RecentEntry.TABLE_RECENTS,
+                        contentValues,
+                        JobContract.RecentEntry._ID + " = ?",
                         new String[] {String.valueOf(ContentUris.parseId(uri))});
                 break;
             }

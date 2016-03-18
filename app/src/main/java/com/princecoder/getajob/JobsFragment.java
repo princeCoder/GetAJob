@@ -85,7 +85,6 @@ public class JobsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mNumPage = getArguments() != null ? getArguments().getInt(NUM_PAGE) : 1;
-        System.out.print(true);
 
         //register the receiver
         getActivity().registerReceiver(mServiceJobsReceiver,

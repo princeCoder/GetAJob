@@ -89,10 +89,9 @@ public class SearchFragment extends Fragment {
         TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        mViewPager.setCurrentItem(1);
-
         return rootView;
     }
+
 
     @Override
     public void onDestroy() {
@@ -172,8 +171,8 @@ public class SearchFragment extends Fragment {
 
     public static class MyPagerAdapter extends FragmentPagerAdapter {
 
-        final int PAGE_COUNT = 2;
-        private String tabTitles[] = new String[] { "Recent", "Viewed"};
+        final int PAGE_COUNT = 1;
+        private String tabTitles[] = new String[] { "Saved"};
         private Context context;
 
         public MyPagerAdapter(FragmentManager fm, Context context) {
@@ -197,9 +196,7 @@ public class SearchFragment extends Fragment {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0: // Fragment # 0 - This will show FirstFragment
-                    return RecentFragment.newInstance();
-                case 1: // Fragment # 0 - This will show FirstFragment different title
-                    return SeenFragment.newInstance();
+                    return SavedJobFragment.newInstance();
                 default:
                     return null;
             }
