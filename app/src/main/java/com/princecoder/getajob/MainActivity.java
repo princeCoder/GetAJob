@@ -17,9 +17,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.princecoder.getajob.model.Job;
+import com.princecoder.getajob.model.RecentSearch;
+import com.princecoder.getajob.sync.JobService;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, SavedJobFragment.OnJobSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, SavedJobFragment.OnJobSelectedListener, SearchFragment.OnSearchSelectedListener,RecentSearchFragment.OnSearchSelectedListener{
 
     private String[] mDrawerTitles;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -103,7 +105,7 @@ public class MainActivity extends AppCompatActivity
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
         // Save the default view index
-        outState.putInt(STATE_SELECTED_POSITION,defaultViewIndex);
+        outState.putInt(STATE_SELECTED_POSITION, defaultViewIndex);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -114,7 +116,7 @@ public class MainActivity extends AppCompatActivity
         int selectedindex=-1;
         if (id == R.id.nav_search) {// Handle search actions
             selectedindex=0;
-        } else if (id == R.id.nav_track) {// Handle the jobs action
+        } else if (id == R.id.nav_myJobs) {// Handle saved jobs action
             selectedindex=1;
         }
         else if (id == R.id.nav_about) { // Handle the about action
@@ -137,7 +139,7 @@ public class MainActivity extends AppCompatActivity
             getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
 
         }else if(position==1){
-            fragment = new TrackFragment();
+            fragment = new SavedJobFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
         }
         else if(position==2){
@@ -162,7 +164,28 @@ public class MainActivity extends AppCompatActivity
         if(job!=null){
             Intent intent = new Intent(this, JobDetailActivity.class)
                     .putExtra(JobDetailActivityFragment.CURRENT_JOB, job);
+            intent.putExtra(JobsFragment.JOB_TAG, job);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onDeleteJobListener(Job job) {
+        Intent intent = new Intent(this, JobService.class);
+        intent.setAction(JobService.DELETE_JOB);
+        intent.putExtra(JobsFragment.JOB_TAG, job);
+        startService(intent);
+    }
+
+    @Override
+    public void onSearchSelectedListener(RecentSearch search) {
+        // We question the Service to get the number of pages
+        Intent intent = new Intent(this, JobService.class);
+        intent.setAction(JobService.FETCH_PAGES_FROM_INTERNET);
+        Job job=new Job();
+        job.setTitle(search.getTitle());
+        job.setLocation(search.getLocation());
+        intent.putExtra(JobsFragment.JOB_TAG, job);
+        startService(intent);
     }
 }

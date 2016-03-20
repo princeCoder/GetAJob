@@ -7,9 +7,9 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.princecoder.getajob.BuildConfig;
-import com.princecoder.getajob.JobsFragment;
 import com.princecoder.getajob.data.JobContract;
 import com.princecoder.getajob.model.Job;
+import com.princecoder.getajob.model.RecentSearch;
 import com.princecoder.getajob.parsers.JobJSONParser;
 import com.princecoder.getajob.utils.Utility;
 
@@ -34,11 +34,20 @@ public class JobService extends IntentService{
     public static final String FETCH_SAVED_JOB = "com.princecoder.sync.action.FETCH_SAVED_JOB";
     public static final String DELETE_JOB = "com.princecoder.sync.action.DELETE_JOB";
     public static final String SAVE_JOB = "com.princecoder.sync.action.SAVE_JOB";
+    public static final String FETCH_RECENT_SEARCH = "com.princecoder.sync.action.FETCH_RECENT_SEARCH";
+    public static final String DELETE_RECENT_SEARCH = "com.princecoder.sync.action.DELETE_RECENT_SEARCH";
+    public static final String SAVE_RECENT_SEARCH = "com.princecoder.sync.action.SAVE_RECENT_SEARCH";
     public static final String SERVICE_JOBS = "SERVICE_JOBS";
     public static final String SERVICE_PAGES = "SERVICE_PAGES";
 
+    // Job List tag
+    public static final String JOB_LIST_TAG = "JOB_LIST_TAG";
+
     // Job tag
     public static final String JOB_TAG = "JOB_TAG";
+
+    // Recent tag
+    public static final String RECENT_TAG = "RECENT_TAG";
 
     //Page number tag
     public static final String PAGE_TAG = "PAGE_TAG";
@@ -70,10 +79,11 @@ public class JobService extends IntentService{
 
             //Action
             final String action = intent.getAction();
-
             if (FETCH_JOB_FROM_INTERNET.equals(action)) {
-
-                int numPage=intent.getIntExtra(JobsFragment.NUM_PAGE,1);
+                // Since the API my return many pages to display job depending how many job we display per page, these are the steps:
+                // 1. Get the page number
+                //2. Fetch jobs on that page
+                int numPage=intent.getIntExtra(PAGE_TAG,1);
 
                 //Fetch the Job from Internet
                 fetchJobFromInternet(job,numPage);
@@ -105,7 +115,43 @@ public class JobService extends IntentService{
                 }
 
             }
+            else if (SAVE_RECENT_SEARCH.equals(action)){
+
+                RecentSearch search=intent.getParcelableExtra(RECENT_TAG);
+                //We save recent search
+                saveRecentSearch(search);
+
+            }
         }
+    }
+
+    private synchronized  void deleteRecentSearch(RecentSearch recent) {
+        if(recent!=null) {
+            //Selection clause
+            String mSelectionClause = JobContract.RecentEntry.TITLE + " = ? AND " +JobContract.RecentEntry.LOCATION + " = ?";
+            //Selection Argument
+            String[] selectionArgs = new String[]{recent.getTitle(),recent.getLocation()!=null?recent.getLocation():""};
+            getContentResolver().delete(JobContract.RecentEntry.CONTENT_URI, mSelectionClause, selectionArgs);
+        }
+    }
+
+    /**
+     * Save a recent search
+     * @param search
+     * If that recent search exist already, We delete it and save it back again
+     */
+    private void saveRecentSearch(RecentSearch search) {
+
+            deleteRecentSearch(search);
+            ContentValues values= new ContentValues();
+            values.put(JobContract.RecentEntry.TITLE,search.getTitle());
+            values.put(JobContract.RecentEntry.LOCATION,search.getLocation());
+            getContentResolver().insert(JobContract.RecentEntry.CONTENT_URI, values);
+
+            // We broadcast the response to the fragment
+            Intent saveIntent = new Intent(SAVE_RECENT_SEARCH);
+            saveIntent.putExtra(MESSAGE, "Save recent search");
+            getApplicationContext().sendBroadcast(saveIntent);
     }
 
     /**
@@ -121,6 +167,28 @@ public class JobService extends IntentService{
                 null, // values for "where" clause
                 null  // sort order
         );
+
+        boolean found= jobEntry.getCount()>0?true:false;
+        jobEntry.close();
+        return found;
+    }
+
+    /**
+     * check if a provided Recent search already exist
+     * @param recent
+     * @return
+     */
+    private boolean isRecentFound(RecentSearch recent){
+        //Selection clause
+        String mSelectionClause = JobContract.RecentEntry.TITLE + " = ? AND " +JobContract.RecentEntry.LOCATION + " = ?";
+        //Selection Argument
+        String[] selectionArgs = new String[]{recent.getTitle(),recent.getLocation()!=null?recent.getLocation():""};
+        Cursor jobEntry = getContentResolver().query(
+                JobContract.RecentEntry.CONTENT_URI,
+                null,
+                mSelectionClause,
+                selectionArgs,
+                null);
 
         boolean found= jobEntry.getCount()>0?true:false;
         jobEntry.close();
@@ -153,11 +221,34 @@ public class JobService extends IntentService{
 
     //Delete the job in the database
     private void deleteJob(Job job){
-
+        if(job!=null) {
+            getContentResolver().delete(JobContract.JobEntry.buildJobUri(Long.parseLong(job.getId())), null, null);
+            // We brodcast the response to the fragment
+            Intent intent = new Intent(DELETE_JOB);
+            getApplicationContext().sendBroadcast(intent);
+        }
     }
 
-    //Fetch jobs from Intenet
-    private synchronized void fetchJobFromInternet(Job job, int pageNumber) {
+    public void broadcastJobsPerPage(ArrayList<Job> list, int pageNum){
+        // We brodcast the response to the fragment
+        Intent intent = new Intent(SERVICE_JOBS);
+        intent.putParcelableArrayListExtra(JOB_LIST_TAG,list);
+        // This is to make the diference on intents.
+        // In this case, No matter how many broadcast I'm using, I will always have different intents.
+        intent.putExtra(PAGE_TAG,pageNum);
+        getApplicationContext().sendBroadcast(intent);
+    }
+
+    /**
+     *
+     * Fetch jobs from Intenet
+     * @param job Basically has the job title and the job location
+     * @param pageNumber The page from which we wants to get available jobs
+     *
+     *  We construct the API
+     *  We get data from the server
+     */
+    public synchronized void fetchJobFromInternet(Job job, int pageNumber) {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
@@ -168,6 +259,7 @@ public class JobService extends IntentService{
         if(Utility.isOnline(getApplicationContext())){
             try{
 
+                //We construct the API Url
 
                 Uri builtUri=null;
                 String locationid=Utility.getLocationId(job.getLocation());
@@ -207,23 +299,21 @@ public class JobService extends IntentService{
 
                 System.out.println("------- Url;   "+url);
 
-                // Create the request to OpenWeatherMap, and open the connection
+                // Create the request to AuthenticJob, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
+
+                //We retreive the JSON string of data
                 jobsJsonStr = Utility.getData(urlConnection);
                 if((jobsJsonStr== null)||(jobsJsonStr.length()==0)){
                     return;
                 }
 
+                //This is the list of job found from that page
                 jobList= (ArrayList<Job>) JobJSONParser.parseFeed(getApplicationContext(),jobsJsonStr);
 
-                // We brodcast the response to the fragment
-                Intent intent = new Intent(SERVICE_JOBS);
-                intent.putParcelableArrayListExtra(JOB_TAG,jobList);
-                // This is to make the diference on intents.
-                // In this case, No matter how many broadcast I'm using, I will always have different intents.
-                intent.putExtra(JobsFragment.NUM_PAGE,pageNumber);
-                getApplicationContext().sendBroadcast(intent);
+                //broadcast the list of job found
+                broadcastJobsPerPage(jobList, pageNumber);
 
             }catch (ProtocolException e) {
                 e.printStackTrace();
@@ -303,6 +393,7 @@ public class JobService extends IntentService{
                 // We brodcast the response to the fragment
                 Intent intent = new Intent(SERVICE_PAGES);
                 intent.putExtra(PAGE_TAG,pages);
+                intent.putExtra(JOB_TAG,job);
                 getApplicationContext().sendBroadcast(intent);
 
 

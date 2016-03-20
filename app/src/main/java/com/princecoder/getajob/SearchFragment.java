@@ -1,17 +1,23 @@
 package com.princecoder.getajob;
 
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,8 +28,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.princecoder.getajob.adapter.RecentRecyclerViewAdapter;
+import com.princecoder.getajob.data.JobContract;
 import com.princecoder.getajob.model.Job;
 import com.princecoder.getajob.model.JobModel;
+import com.princecoder.getajob.model.RecentSearch;
 import com.princecoder.getajob.sync.JobService;
 
 import java.util.ArrayList;
@@ -34,7 +43,7 @@ import java.util.Iterator;
 /**
  * create an instance of fragment to make search
  */
-public class SearchFragment extends Fragment {
+public class SearchFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private EditText mTitleEdt;
     private EditText mLocation;
@@ -43,10 +52,32 @@ public class SearchFragment extends Fragment {
     private FragmentPagerAdapter mAdapterViewPager;
     private Toolbar mToolbar;
     private int mNumPage;
-    private Job mJob;
+    private Job mJob=new Job();
+
+
+    private RecyclerView mRecyclerView;
+    private RecentRecyclerViewAdapter mAdapter;
+    //    private TextView mEmptyView;
+    private static final int CURSOR_LOADER_ID = 0;
+
+    // Log field
+    private final String TAG=getClass().getSimpleName();
+
+    //Listener
+    OnSearchSelectedListener mListener;
 
     public SearchFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnSearchSelectedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(TAG + activity.getString(R.string.job_selected_listener_error));
+        }
     }
 
     @Override
@@ -55,6 +86,9 @@ public class SearchFragment extends Fragment {
         //register the receiver
         getActivity().registerReceiver(mServicePagesReceiver,
                 new IntentFilter(JobService.SERVICE_PAGES));
+
+        getActivity().registerReceiver(mRecentSearchReceiver,
+                new IntentFilter(JobService.SAVE_RECENT_SEARCH));
     }
 
     @Override
@@ -75,21 +109,74 @@ public class SearchFragment extends Fragment {
         mSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Let find jobs from internet
-                //@Todo make sur at least one field is filled out
-                searchJobs();
+                //Let find the number of pages
+                getNumberOfPage(mTitleEdt.getText().toString(), mLocation.getText().toString());
             }
         });
 
-        mViewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
-        mAdapterViewPager = new MyPagerAdapter(getFragmentManager());
-        mViewPager.setAdapter(new MyPagerAdapter(getFragmentManager(), getActivity()));
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_recent_search);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        // Give the TabLayout the ViewPager
-        TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.sliding_tabs);
-        tabLayout.setupWithViewPager(mViewPager);
+        mAdapter=new RecentRecyclerViewAdapter(getActivity(), new RecentRecyclerViewAdapter.RecentAdapterOnClickHandler() {
+            @Override
+            public void onClick(RecentSearch search, RecentRecyclerViewAdapter.ViewHolder vh) {
+//                mListener.onSearchSelectedListener(search);
 
+                Intent intent = new Intent(getActivity(), JobService.class);
+                intent.setAction(JobService.FETCH_PAGES_FROM_INTERNET);
+                Job job=new Job();
+                job.setTitle(search.getTitle());
+                job.setLocation(search.getLocation());
+                intent.putExtra(JobsFragment.JOB_TAG, job);
+                getActivity().startService(intent);
+
+            }
+        });
+
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setHasFixedSize(true);
         return rootView;
+    }
+
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(getActivity(),
+                JobContract.RecentEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        //Whenever I resume this fragment, I restart the loader
+        restartLoader();
+    }
+
+    private void restartLoader(){
+
+        getLoaderManager().restartLoader(CURSOR_LOADER_ID, null, this);
+    }
+
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Cursor cursor=data;
+        mAdapter.swapCursor(cursor);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mAdapter.swapCursor(null);
+    }
+
+    //Handle the click on the recyclerview
+    public interface OnSearchSelectedListener{
+        void onSearchSelectedListener(RecentSearch job);
     }
 
 
@@ -98,6 +185,7 @@ public class SearchFragment extends Fragment {
         super.onDestroy();
         //Unregister the brodcast receiver
         getActivity().unregisterReceiver(mServicePagesReceiver);
+        getActivity().unregisterReceiver(mRecentSearchReceiver);
     }
 
     public void searchCitiesList() {
@@ -130,86 +218,70 @@ public class SearchFragment extends Fragment {
 
     }
 
+//    get the number of page for the ViewPager
 
-    //Search Jobs
-
-    public void searchJobs() {
-
-        //Get input data
-        String title = mTitleEdt.getText().toString();
-        String location = mLocation.getText().toString();
-
-        //Create job object
-        mJob = new Job();
+    private void getNumberOfPage(String title, String location) {
         mJob.setTitle(title);
         mJob.setLocation(location);
-
         // We question the Service to get the number of pages
         Intent intent = new Intent(getActivity(), JobService.class);
         intent.setAction(JobService.FETCH_PAGES_FROM_INTERNET);
         intent.putExtra(JobsFragment.JOB_TAG, mJob);
         getActivity().startService(intent);
-
     }
 
 
+
+    //Search Jobs
+
+    public void searchJobs(Job job) {
+
+    }
+
+    //Number of pages needed to display all the jobs
     private BroadcastReceiver mServicePagesReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (JobService.SERVICE_PAGES.equals(intent.getAction())) {
+                //Once we retreive the number of page need to display jobs in the ViewPager,
+                // we can go get jobs from the server
                 mNumPage=intent.getIntExtra(JobService.PAGE_TAG,1);
+                mJob=intent.getParcelableExtra(JobService.JOB_TAG);
+
                 //Start new activity
                 Intent intent1 = new Intent(getActivity(), ListJobActivity.class);
                 intent1.putExtra(JobsFragment.JOB_TAG, mJob);
                 intent1.putExtra(ListJobsFragment.NUM_PAGE_TAG, mNumPage);
                 getActivity().startActivity(intent1);
 
+                if(mNumPage>0){ //We found jobs. So we need to save that recent search
+
+                    //@Todo delete that recent search if it exist already and save it again
+
+                    RecentSearch search=new RecentSearch();
+                    search.setTitle(mJob.getTitle());
+                    search.setLocation(mJob.getLocation());
+
+                    //We send an Intent to the service to save this recent search
+                    Intent searchIntent = new Intent(getActivity(), JobService.class);
+                    searchIntent.setAction(JobService.SAVE_RECENT_SEARCH);
+                    searchIntent.putExtra(JobService.RECENT_TAG, search);
+                    getActivity().startService(searchIntent);
+                }
+
             }
         }
     };
 
 
-    public static class MyPagerAdapter extends FragmentPagerAdapter {
-
-        final int PAGE_COUNT = 1;
-        private String tabTitles[] = new String[] { "Saved"};
-        private Context context;
-
-        public MyPagerAdapter(FragmentManager fm, Context context) {
-            super(fm);
-            this.context = context;
-        }
-
-
-        public MyPagerAdapter(FragmentManager fragmentManager) {
-            super(fragmentManager);
-        }
-
-        // Returns total number of pages
+    private BroadcastReceiver mRecentSearchReceiver = new BroadcastReceiver() {
         @Override
-        public int getCount() {
-            return PAGE_COUNT;
-        }
-
-        // Returns the fragment to display for that page
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0: // Fragment # 0 - This will show FirstFragment
-                    return SavedJobFragment.newInstance();
-                default:
-                    return null;
+        public void onReceive(Context context, Intent intent) {
+            if (JobService.SAVE_RECENT_SEARCH.equals(intent.getAction())) {
+                String message = intent.getStringExtra(JobService.MESSAGE);
+                Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
             }
         }
-
-        // Returns the page title for the top indicator
-        @Override
-        public CharSequence getPageTitle(int position) {
-
-            return tabTitles[position];
-        }
-
-    }
-
+    };
 
 }

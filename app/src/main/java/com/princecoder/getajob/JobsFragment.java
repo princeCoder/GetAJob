@@ -62,9 +62,6 @@ public class JobsFragment extends Fragment {
     //Job tag
     public static String JOB_TAG="JOB_TAG";
 
-    //Page Tag
-    public static String NUM_PAGE="NUM_PAGE";
-
     //Num Page
     private int mNumPage;
     
@@ -76,7 +73,7 @@ public class JobsFragment extends Fragment {
 
         // Supply num input as an argument.
         Bundle args = new Bundle();
-        args.putInt(NUM_PAGE, numPage);
+        args.putInt(JobService.PAGE_TAG, numPage);
         f.setArguments(args);
 
         return f;
@@ -84,7 +81,7 @@ public class JobsFragment extends Fragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mNumPage = getArguments() != null ? getArguments().getInt(NUM_PAGE) : 1;
+        mNumPage = getArguments() != null ? getArguments().getInt(JobService.PAGE_TAG) : 1;
 
         //register the receiver
         getActivity().registerReceiver(mServiceJobsReceiver,
@@ -133,7 +130,7 @@ public class JobsFragment extends Fragment {
             Intent intent=new Intent(getActivity(),JobService.class);
             intent.setAction(JobService.FETCH_JOB_FROM_INTERNET);
             intent.putExtra(JobService.JOB_TAG, jobParam);
-            intent.putExtra(NUM_PAGE,mNumPage);
+            intent.putExtra(JobService.PAGE_TAG,mNumPage);
 
             mProgressBar.setVisibility(View.VISIBLE);
 
@@ -186,12 +183,12 @@ public class JobsFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (JobService.SERVICE_JOBS.equals(intent.getAction())) {
-                int pageNumber=intent.getIntExtra(NUM_PAGE,1);
+                int pageNumber=intent.getIntExtra(JobService.PAGE_TAG,1);
                 //Since the StatePagerAdapter create the current fragment and the next one,
                 //In my case since I populate the view using the broadcast, I might have two instances running one after one.
                 //So I use this extra to create different intents
                 if(mNumPage==pageNumber){
-                    mJobList=intent.getParcelableArrayListExtra(JobService.JOB_TAG);
+                    mJobList=intent.getParcelableArrayListExtra(JobService.JOB_LIST_TAG);
                     mProgressBar.setVisibility(View.GONE);
                     mAdapter.swapElements(mJobList);
                     if(mJobList!=null && mJobList.size()==0){ //We display a message in the snackBar

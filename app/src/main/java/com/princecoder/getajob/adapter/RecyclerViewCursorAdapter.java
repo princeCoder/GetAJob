@@ -94,20 +94,35 @@ public class RecyclerViewCursorAdapter extends RecyclerView.Adapter<RecyclerView
             mLogo = (ImageView) view.findViewById(R.id.company_logo);
             view.setClickable(true);
             view.setOnClickListener(this);
+            mLogo.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
 
-            //Handle the click on an element
-            if(selectedItem!=-1){
-                notifyItemChanged(selectedItem);
-            }
-            setSelectedItem(getAdapterPosition());
-            mCursor.moveToPosition(getSelectedItem());
+            if(v.getId()==R.id.company_logo){
+                //Handle the click on an element
+                if(selectedItem!=-1){
+                    notifyItemChanged(selectedItem);
+                }
+                setSelectedItem(getAdapterPosition());
+                mCursor.moveToPosition(getSelectedItem());
 
-            mCallback.onClick(getCurrentJob(), this);
-            notifyItemChanged(getSelectedItem());
+                mCallback.onDeleteJob(getCurrentJob(), this);
+                notifyItemChanged(getSelectedItem());
+            }
+            else{
+                //Handle the click on an element
+                if(selectedItem!=-1){
+                    notifyItemChanged(selectedItem);
+                }
+                setSelectedItem(getAdapterPosition());
+                mCursor.moveToPosition(getSelectedItem());
+
+                mCallback.onClick(getCurrentJob(), this);
+                notifyItemChanged(getSelectedItem());
+            }
+
         }
     }
 
@@ -153,6 +168,7 @@ public class RecyclerViewCursorAdapter extends RecyclerView.Adapter<RecyclerView
     // Interface to handle the Item Click listener on the View Holder
     public interface JobAdapterOnClickHandler {
         void onClick(Job job, ViewHolder vh);
+        void onDeleteJob(Job job, ViewHolder vh);
     }
 
 }

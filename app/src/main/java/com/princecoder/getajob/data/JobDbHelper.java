@@ -12,7 +12,7 @@ import com.princecoder.getajob.utils.L;
 public class JobDbHelper extends SQLiteOpenHelper{
     public static final String LOG_TAG = JobDbHelper.class.getSimpleName();
 
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
     public static final String DATABASE_NAME = "getajob.db";
 
     public JobDbHelper(Context context) {

@@ -2,10 +2,7 @@ package com.princecoder.getajob;
 
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,31 +15,32 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.princecoder.getajob.adapter.RecyclerViewCursorAdapter;
+import com.princecoder.getajob.adapter.RecentRecyclerViewAdapter;
 import com.princecoder.getajob.data.JobContract;
 import com.princecoder.getajob.model.Job;
+import com.princecoder.getajob.model.RecentSearch;
 import com.princecoder.getajob.sync.JobService;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SavedJobFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class RecentSearchFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private RecyclerView mRecyclerView;
-    private RecyclerViewCursorAdapter mAdapter;
-//    private TextView mEmptyView;
+    private RecentRecyclerViewAdapter mAdapter;
+    //    private TextView mEmptyView;
     private static final int CURSOR_LOADER_ID = 0;
 
     //Listener
-    OnJobSelectedListener mListener;
+    OnSearchSelectedListener mListener;
 
     // Log field
     private final String TAG=getClass().getSimpleName();
 
     // newInstance constructor for creating fragment with arguments
-    public static SavedJobFragment newInstance() {
-        SavedJobFragment f = new SavedJobFragment();
+    public static RecentSearchFragment newInstance() {
+        RecentSearchFragment f = new RecentSearchFragment();
         return f;
     }
 
@@ -50,9 +48,6 @@ public class SavedJobFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //register the receiver
-        getActivity().registerReceiver(mDeleteJobReceiver,
-                new IntentFilter(JobService.DELETE_JOB));
 
     }
 
@@ -60,7 +55,7 @@ public class SavedJobFragment extends Fragment implements LoaderManager.LoaderCa
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnJobSelectedListener) activity;
+            mListener = (OnSearchSelectedListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(TAG + activity.getString(R.string.job_selected_listener_error));
         }
@@ -70,29 +65,29 @@ public class SavedJobFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_saved_jobs, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_recent, container, false);
 
 //        mEmptyView=(TextView)rootView.findViewById(R.id.empty_view);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_saved_job);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_recent_search);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mAdapter=new RecyclerViewCursorAdapter(getActivity(), new RecyclerViewCursorAdapter.JobAdapterOnClickHandler() {
+        mAdapter=new RecentRecyclerViewAdapter(getActivity(), new RecentRecyclerViewAdapter.RecentAdapterOnClickHandler() {
             @Override
-            public void onClick(Job job, RecyclerViewCursorAdapter.ViewHolder vh) {
-                mListener.onJobSelectedListener(job);
-            }
+            public void onClick(RecentSearch search, RecentRecyclerViewAdapter.ViewHolder vh) {
+//                mListener.onSearchSelectedListener(search);
+                Intent intent = new Intent(getActivity(), JobService.class);
+                intent.setAction(JobService.FETCH_PAGES_FROM_INTERNET);
+                Job job=new Job();
+                job.setTitle(search.getTitle());
+                job.setLocation(search.getLocation());
+                intent.putExtra(JobsFragment.JOB_TAG, job);
+                getActivity().startService(intent);
 
-            @Override
-            public void onDeleteJob(Job job, RecyclerViewCursorAdapter.ViewHolder vh) {
-                mListener.onDeleteJobListener(job);
             }
         });
 
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true);
-
-        //Whenever I resume this fragment, I restart the loader
-        restartLoader();
 
         return rootView;
     }
@@ -103,21 +98,21 @@ public class SavedJobFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        //Unregister the brodcast receiver
-        getActivity().unregisterReceiver(mDeleteJobReceiver);
-    }
-
-
-    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(getActivity(),
-                JobContract.JobEntry.CONTENT_URI,
+                JobContract.RecentEntry.CONTENT_URI,
                 null,
                 null,
                 null,
                 null);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        //Whenever I resume this fragment, I restart the loader
+        restartLoader();
     }
 
     private void restartLoader(){
@@ -137,18 +132,8 @@ public class SavedJobFragment extends Fragment implements LoaderManager.LoaderCa
         mAdapter.swapCursor(null);
     }
 
-    public interface OnJobSelectedListener{
-        void onJobSelectedListener(Job job);
-        void onDeleteJobListener(Job job);
+    public interface OnSearchSelectedListener{
+        void onSearchSelectedListener(RecentSearch job);
     }
-
-    private BroadcastReceiver mDeleteJobReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (JobService.DELETE_JOB.equals(intent.getAction())) {
-               restartLoader();
-            }
-        }
-    };
 
 }
