@@ -55,6 +55,9 @@ public class JobDetailActivityFragment extends Fragment {
         //register the receiver
         getActivity().registerReceiver(mServiceSaveJobReceiver,
                 new IntentFilter(JobService.SAVE_JOB));
+
+        getActivity().registerReceiver(mServiceJobExistReceiver,
+                new IntentFilter(JobService.DOES_JOB_EXIST));
     }
 
     @Override
@@ -113,35 +116,29 @@ public class JobDetailActivityFragment extends Fragment {
 
     //Save the current job in the database
     private void saveJob(Job job) {
-        Intent bookIntent = new Intent(getActivity(), JobService.class);
-        bookIntent.putExtra(JobService.JOB_TAG, job);
-        bookIntent.setAction(JobService.SAVE_JOB);
-        getActivity().startService(bookIntent);
+        Intent jobIntent = new Intent(getActivity(), JobService.class);
+        jobIntent.putExtra(JobService.JOB_TAG, job);
+        jobIntent.setAction(JobService.SAVE_JOB);
+        getActivity().startService(jobIntent);
 
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        //handle the Up navigation
-//        getActivity().getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                getActivityCast().onBackPressed();
-//            }
-//        });
-    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         //Unregister the brodcast receiver
         getActivity().unregisterReceiver(mServiceSaveJobReceiver);
+        getActivity().unregisterReceiver(mServiceJobExistReceiver);
     }
 
-    public JobDetailActivity getActivityCast() {
-        return (JobDetailActivity) getActivity();
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Intent intent=new Intent(getActivity(),JobService.class);
+        intent.setAction(JobService.DOES_JOB_EXIST);
+        intent.putExtra(JobService.JOB_TAG, mCurrentJob);
+        getActivity().startService(intent);
     }
 
     @Override
@@ -162,8 +159,10 @@ public class JobDetailActivityFragment extends Fragment {
         mDescription.setText(Html.fromHtml(mCurrentJob.getDescription()));
         mJobType.setText(mCurrentJob.getJobType());
         mRelocationAssiatance.setText(mCurrentJob.getRelocationAssistance()==0?"No":"Yes");
-        mPostedDate.setText(Utility.getFormattedMonthDayYear(getActivity(), mCurrentJob.getPostDate()));
+        mPostedDate.setText(Utility.getFormattedMonthDayYear(mCurrentJob.getPostDate()));
         mKeywords.setText(mCurrentJob.getKeywords());
+
+
     }
 
     private BroadcastReceiver mServiceSaveJobReceiver = new BroadcastReceiver() {
@@ -172,6 +171,17 @@ public class JobDetailActivityFragment extends Fragment {
             if (JobService.SAVE_JOB.equals(intent.getAction())) {
                 String message = intent.getStringExtra(JobService.MESSAGE);
                 Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
+                mSaveButton.setVisibility(View.GONE);
+            }
+        }
+    };
+
+    private BroadcastReceiver mServiceJobExistReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (JobService.DOES_JOB_EXIST.equals(intent.getAction())) {
+                boolean message = intent.getBooleanExtra(JobService.DOES_JOB_EXIST, false);
+                mSaveButton.setVisibility(message?View.GONE:View.VISIBLE);
             }
         }
     };

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 /**
  * Created by Prinzly Ngotoum on 3/13/16.
  */
-public class JobAdapterRecyclerView extends RecyclerView.Adapter<JobAdapterRecyclerView.ViewHolder> {
+public class JobAdapterRecyclerView extends RecyclerView.Adapter<JobAdapterRecyclerView.ViewHolder>{
     // Context
     Context mContext;
 
@@ -43,7 +43,7 @@ public class JobAdapterRecyclerView extends RecyclerView.Adapter<JobAdapterRecyc
 
 
     //View holder class which help to recycle row view elements
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView mTitle;
         public TextView mLocation;
         public TextView mCompany;
@@ -64,8 +64,22 @@ public class JobAdapterRecyclerView extends RecyclerView.Adapter<JobAdapterRecyc
             mLogo = (ImageView) view.findViewById(R.id.company_logo);
             mAction = (ImageButton) view.findViewById(R.id.action_button);
             view.setClickable(true);
-
+            view.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+
+            //Handle the click on an element
+            if(selectedItem!=-1){
+                notifyItemChanged(selectedItem);
+            }
+            setSelectedItem(getAdapterPosition());
+
+            mCallback.onClick(getLayoutPosition(), this);
+            notifyItemChanged(getSelectedItem());
+        }
+
 
     }
     public Job getItem(int position) {
@@ -85,30 +99,6 @@ public class JobAdapterRecyclerView extends RecyclerView.Adapter<JobAdapterRecyc
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.job_list_item, parent, false);
             view.setFocusable(true);
             final ViewHolder vh = new ViewHolder(view);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //Handle the click on an element
-                    if(selectedItem!=-1){
-                        notifyItemChanged(selectedItem);
-                    }
-                    setSelectedItem(vh.getAdapterPosition());
-                    mCallback.onClick(vh.getAdapterPosition(), vh);
-                    notifyItemChanged(getSelectedItem());
-                }
-            });
-            vh.mAction.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //Handle the click on an element
-                    if (selectedItem != -1) {
-                        notifyItemChanged(selectedItem);
-                    }
-                    setSelectedItem(vh.getAdapterPosition());
-                    mCallback.onSaveJob(vh.getAdapterPosition(), vh);
-                    notifyItemChanged(getSelectedItem());
-                }
-            });
             return vh;
         }
         else {
@@ -141,15 +131,16 @@ public class JobAdapterRecyclerView extends RecyclerView.Adapter<JobAdapterRecyc
 
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mTitle.setText(mElements.get(position).getTitle());
         holder.mCompany.setText(mElements.get(position).getCompanyName());
         holder.mLocation.setText(mElements.get(position).getLocation());
-        holder.mDate.setText(Utility.getDayDifference(mContext, mElements.get(position).getPostDate()));
+        holder.mDate.setText(Utility.getDayDifference(mElements.get(position).getPostDate()));
         Glide.with(holder.mLogo.getContext())
                 .load(mElements.get(position).getCompanyLogo())
                 .fitCenter()
                 .into(holder.mLogo);
+        holder.itemView.setSelected(getSelectedItem() == position);
     }
 
 

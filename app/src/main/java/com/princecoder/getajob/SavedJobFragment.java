@@ -34,6 +34,12 @@ public class SavedJobFragment extends Fragment implements LoaderManager.LoaderCa
 //    private TextView mEmptyView;
     private static final int CURSOR_LOADER_ID = 0;
 
+    //Position
+    private int mPosition=-1;
+
+    //Selected item
+    private final String SELECTED_KEY="Selected_key";
+
     //Listener
     OnJobSelectedListener mListener;
 
@@ -80,6 +86,7 @@ public class SavedJobFragment extends Fragment implements LoaderManager.LoaderCa
             @Override
             public void onClick(Job job, RecyclerViewCursorAdapter.ViewHolder vh) {
                 mListener.onJobSelectedListener(job);
+                mPosition=vh.getAdapterPosition();
             }
 
             @Override
@@ -87,6 +94,19 @@ public class SavedJobFragment extends Fragment implements LoaderManager.LoaderCa
                 mListener.onDeleteJobListener(job);
             }
         });
+
+        if(savedInstanceState!=null){
+            if(savedInstanceState.containsKey(SELECTED_KEY)){
+                mPosition = savedInstanceState.getInt(SELECTED_KEY);
+            }
+        }
+
+        if (mPosition != RecyclerView.NO_POSITION) {
+            // If we don't need to restart the loader, and there's a desired position to restore
+            // to, do so now.
+            mRecyclerView.smoothScrollToPosition(mPosition);
+            mAdapter.setSelectedItem(mPosition);
+        }
 
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true);
@@ -100,6 +120,17 @@ public class SavedJobFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        // When tablets rotate, the currently selected list item needs to be saved.
+        // When no item is selected, mPosition will be set to RecyclerView.INVALID_POSITION,
+        // so check for that before storing.
+        if (mPosition != RecyclerView.NO_POSITION) {
+            outState.putInt(SELECTED_KEY, mPosition);
+        }
+        super.onSaveInstanceState(outState);
     }
 
     @Override

@@ -76,6 +76,7 @@ public class JobJSONParser {
                 description=jobObject.has(JOB_DESCRIPTION)?jobObject.getString(JOB_DESCRIPTION):"";
                 perks=jobObject.has(JOB_PERKS)?jobObject.getString(JOB_PERKS):"";
                 String date=jobObject.has(JOB_POSTDATE)?jobObject.getString(JOB_POSTDATE):"";
+                //convert the date to long
                 postdate=Utility.convertStringToDateMilliseconds(date);
                 relocationAssistance=jobObject.has(JOB_RELOCATION_ASSISTANCE)?jobObject.getInt(JOB_RELOCATION_ASSISTANCE):0;
                 keywords=jobObject.has(JOB_KEYWORDS)?jobObject.getString(JOB_KEYWORDS):"";

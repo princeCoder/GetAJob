@@ -34,8 +34,7 @@ public class JobService extends IntentService{
     public static final String FETCH_SAVED_JOB = "com.princecoder.sync.action.FETCH_SAVED_JOB";
     public static final String DELETE_JOB = "com.princecoder.sync.action.DELETE_JOB";
     public static final String SAVE_JOB = "com.princecoder.sync.action.SAVE_JOB";
-    public static final String FETCH_RECENT_SEARCH = "com.princecoder.sync.action.FETCH_RECENT_SEARCH";
-    public static final String DELETE_RECENT_SEARCH = "com.princecoder.sync.action.DELETE_RECENT_SEARCH";
+    public static final String DOES_JOB_EXIST = "com.princecoder.sync.action.DOES_JOB_EXIST";
     public static final String SAVE_RECENT_SEARCH = "com.princecoder.sync.action.SAVE_RECENT_SEARCH";
     public static final String SERVICE_JOBS = "SERVICE_JOBS";
     public static final String SERVICE_PAGES = "SERVICE_PAGES";
@@ -86,14 +85,20 @@ public class JobService extends IntentService{
                 int numPage=intent.getIntExtra(PAGE_TAG,1);
 
                 //Fetch the Job from Internet
-                fetchJobFromInternet(job,numPage);
+                fetchJobFromInternet(job, numPage);
 
             }else if (FETCH_PAGES_FROM_INTERNET.equals(action)) {
 
                 //Fetch the Job from Internet
                 getNumberOfPageFromInternet(job);
 
-            }else if (FETCH_SAVED_JOB.equals(action)) {
+            }else if (DOES_JOB_EXIST.equals(action)) {
+                Intent intent1 = new Intent(DOES_JOB_EXIST);
+                intent1.putExtra(DOES_JOB_EXIST,isJobFound(job.getId()));
+                getApplicationContext().sendBroadcast(intent1);
+
+            }
+            else if (FETCH_SAVED_JOB.equals(action)) {
 
                 //We fetch job from the database
                 fetchSavedJob(job);
@@ -113,7 +118,6 @@ public class JobService extends IntentService{
                     saveIntent.putExtra(MESSAGE,"Job already saved");
                     getApplicationContext().sendBroadcast(saveIntent);
                 }
-
             }
             else if (SAVE_RECENT_SEARCH.equals(action)){
 

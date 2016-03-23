@@ -50,11 +50,12 @@ public class RecyclerViewCursorAdapter extends RecyclerView.Adapter<RecyclerView
         holder.mTitle.setText(mCursor.getString(mCursor.getColumnIndex(JobContract.JobEntry.TITLE)));
         holder.mCompany.setText(mCursor.getString(mCursor.getColumnIndex(JobContract.JobEntry.COMPANY_NAME)));
         holder.mLocation.setText(mCursor.getString(mCursor.getColumnIndex(JobContract.JobEntry.LOCATION)));
-        holder.mDate.setText(Utility.getDayDifference(mContext,mCursor.getInt(mCursor.getColumnIndex(JobContract.JobEntry.POST_DATE))));
+        holder.mDate.setText(Utility.getDayDifference(mCursor.getLong(mCursor.getColumnIndex(JobContract.JobEntry.POST_DATE))));
         Glide.with(holder.mLogo.getContext())
                 .load(mCursor.getString(mCursor.getColumnIndex(JobContract.JobEntry.COMPANY_LOGO)))
                 .fitCenter()
                 .into(holder.mLogo);
+        holder.itemView.setSelected(selectedItem == position);
     }
 
     @Override
@@ -98,7 +99,7 @@ public class RecyclerViewCursorAdapter extends RecyclerView.Adapter<RecyclerView
             mDate = (TextView) view.findViewById(R.id.job_posted_date);
             mLogo = (ImageView) view.findViewById(R.id.company_logo);
             mAction = (ImageButton) view.findViewById(R.id.action_button);
-            mAction.setImageDrawable(mContext.getDrawable(R.mipmap.ic_action_minus));
+            mAction.setVisibility(View.VISIBLE);
             view.setClickable(true);
             view.setOnClickListener(this);
             mAction.setOnClickListener(this);
@@ -108,22 +109,13 @@ public class RecyclerViewCursorAdapter extends RecyclerView.Adapter<RecyclerView
         public void onClick(View v) {
 
             if(v.getId()==R.id.action_button){
-                //Handle the click on an element
-                if(selectedItem!=-1){
-                    notifyItemChanged(selectedItem);
-                }
-                setSelectedItem(getAdapterPosition());
-                mCursor.moveToPosition(getSelectedItem());
-
                 mCallback.onDeleteJob(getCurrentJob(), this);
-                notifyItemChanged(getSelectedItem());
             }
             else{
-                //Handle the click on an element
                 if(selectedItem!=-1){
                     notifyItemChanged(selectedItem);
                 }
-                setSelectedItem(getAdapterPosition());
+                setSelectedItem(getLayoutPosition());
                 mCursor.moveToPosition(getSelectedItem());
 
                 mCallback.onClick(getCurrentJob(), this);

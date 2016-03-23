@@ -13,7 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -30,9 +29,6 @@ public class JobsFragment extends Fragment {
 
     private TextView emptyView;
 
-    // List of Artists
-    private ArrayList<Job> mListOfArtist=new ArrayList<>();
-
     // My adapter
     private JobAdapterRecyclerView mAdapter;
 
@@ -40,7 +36,7 @@ public class JobsFragment extends Fragment {
     private RecyclerView mRecyclerView;
 
     //Position
-    private int mPosition;
+    private int mPosition=-1;
 
     //Selected item
     private final String SELECTED_KEY="Selected_key";
@@ -86,7 +82,6 @@ public class JobsFragment extends Fragment {
         //register the receiver
         getActivity().registerReceiver(mServiceJobsReceiver,
                 new IntentFilter(JobService.SERVICE_JOBS));
-//        setRetainInstance(true);
     }
 
     @Override
@@ -108,6 +103,7 @@ public class JobsFragment extends Fragment {
                 //@Todo display job details
                 Job job=mAdapter.getItem(id);
                 mListener.onJobSelectedListener(job);
+                mPosition=id;
             }
 
             @Override
@@ -130,7 +126,6 @@ public class JobsFragment extends Fragment {
             }
         }
         else{
-//            mJobList=getActivity().getIntent().getParcelableArrayListExtra(JobService.JOB_TAG);
             jobParam=getActivity().getIntent().getParcelableExtra(JOB_TAG);
             Intent intent=new Intent(getActivity(),JobService.class);
             intent.setAction(JobService.FETCH_JOB_FROM_INTERNET);
@@ -144,16 +139,28 @@ public class JobsFragment extends Fragment {
 
         }
 
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setHasFixedSize(true);
 
         if (mPosition != RecyclerView.NO_POSITION) {
             // If we don't need to restart the loader, and there's a desired position to restore
             // to, do so now.
-            mRecyclerView.smoothScrollToPosition(mPosition);
-            mAdapter.setSelectedItem(mPosition);
-        }
+//            mRecyclerView.smoothScrollToPosition(mPosition);
+//            mAdapter.setSelectedItem(mPosition);
 
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setHasFixedSize(true);
+            mAdapter.notifyItemChanged(mPosition);
+            mAdapter.setSelectedItem(mPosition);
+            mAdapter.notifyItemChanged(mPosition);
+            mRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    //Align selection to top
+                    mRecyclerView.smoothScrollToPosition(mPosition);
+                }
+            });
+
+
+        }
 
         return myView;
     }
@@ -177,7 +184,7 @@ public class JobsFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if(mPosition!= ListView.INVALID_POSITION){
+        if (mPosition != RecyclerView.NO_POSITION) {
             outState.putInt(SELECTED_KEY, mPosition);
         }
         outState.putParcelableArrayList(LIST_TAG,mJobList);

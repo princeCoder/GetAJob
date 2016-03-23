@@ -104,11 +104,10 @@ public class Utility {
      * Given a day, returns just the name to use for that day.
      * E.g "today", "tomorrow", "3 days ago".
      *
-     * @param context Context to use for resource localization
      * @param dateInMillis The date in milliseconds
      * @return
      */
-    public static String getDayDifference(Context context, long dateInMillis) {
+    public static String getDayDifference(long dateInMillis) {
         // If the date is today, return the localized version of "Today" instead of the actual
         // day name.
 
@@ -128,12 +127,11 @@ public class Utility {
 
     /**
      * Converts  date format to the format "Month, day year", e.g "June, 24 2015".
-     * @param context Context to use for resource localization
      * @param dateInMillis The db formatted date string, expected to be of the form specified
      *                in Utility.DATE_FORMAT
      * @return The day in the form of a string formatted "June, 24 2015 "
      */
-    public static String getFormattedMonthDayYear(Context context, long dateInMillis ) {
+    public static String getFormattedMonthDayYear(long dateInMillis ) {
         Time time = new Time();
         time.setToNow();
         SimpleDateFormat monthDayFormat = new SimpleDateFormat(DATE_FORMAT);
