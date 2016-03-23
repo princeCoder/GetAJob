@@ -28,4 +28,5 @@
     <string name="title_activity_list_jobs">ListJobs</string>
     <string name="title_activity_job_detail">JobDetailActivity</string>
     <string name="job_selected_listener_error">Must Implement OnJobSelectedListener</string>
+    <string name="detail_menu">Details</string>
 </resources>

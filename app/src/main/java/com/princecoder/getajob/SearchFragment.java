@@ -18,6 +18,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,6 +64,7 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
     // Log field
     private final String TAG=getClass().getSimpleName();
 
+
     //Listener
     OnSearchSelectedListener mListener;
 
@@ -98,10 +100,17 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
         View rootView=inflater.inflate(R.layout.fragment_search, container, false);
         mTitleEdt= (EditText) rootView.findViewById(R.id.title_edt);
         mTitleEdt.setFocusable(true);
+
+        //The Location Textview should not be editable
         mLocation=(EditText)rootView.findViewById(R.id.location_edt);
+        mLocation.setTag(mLocation.getKeyListener());
+        mLocation.setKeyListener(null);
+
+        //You should click on the textView in order to enter your location
         mLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 searchCitiesList();
             }
         });
@@ -110,7 +119,15 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
             @Override
             public void onClick(View view) {
                 //Let find the number of pages
-                getNumberOfPage(mTitleEdt.getText().toString(), mLocation.getText().toString());
+                String title=mTitleEdt.getText().toString().trim();
+                String location=mLocation.getText().toString().trim();
+                if(title.isEmpty()&&location.isEmpty()){
+                    //We display a snackBar
+                    Snackbar.make(getView(), "You need to enter a criteria", Snackbar.LENGTH_LONG).show();
+                }else{
+                    getNumberOfPage(title, location);
+                }
+
             }
         });
 
@@ -188,17 +205,40 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
         getActivity().unregisterReceiver(mRecentSearchReceiver);
     }
 
+    public void fetchLocations(String searchString, ListView listview) {
+        Iterator iterator=JobModel.myLocations.keySet().iterator();
+        ArrayList<String> list=new ArrayList<>(JobModel.myLocations.values().size());
+        while(iterator.hasNext()){
+            String key=iterator.next().toString();
+            if(key.toLowerCase().contains(searchString.trim().toLowerCase()))
+                list.add(key);
+        }
+        Collections.sort(list);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_1, android.R.id.text1, list);
+        listview.setAdapter(adapter);
+    }
+
+    public void setMyAdapter(){
+
+    }
+
     public void searchCitiesList() {
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.cities_listview);
         final ListView listView = (ListView) dialog.findViewById(R.id.list);
+        final SearchView  searchText = (SearchView) dialog.findViewById(R.id.searchText);
+        searchText.setIconifiedByDefault(false);
+        searchText.setQueryHint("Enter the name of the city to sort");
+
         Iterator iterator=JobModel.myLocations.keySet().iterator();
-        ArrayList<String> list=new ArrayList<>(JobModel.myLocations.values().size());
+        final ArrayList<String> list=new ArrayList<>(JobModel.myLocations.values().size());
         Collections.sort(list);
         while(iterator.hasNext()){
             list.add(iterator.next().toString());
         }
-        dialog.show();
+
+
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_list_item_1, android.R.id.text1, list);
         listView.setAdapter(adapter);
@@ -216,6 +256,39 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
 
         });
 
+        searchText.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                String searchKeyword = searchText.getQuery().toString();
+                if (!searchKeyword.isEmpty()) {
+                    fetchLocations(searchKeyword, listView);
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                if (s.isEmpty()) {
+//
+//                    Iterator iterator=JobModel.myLocations.keySet().iterator();
+//                    ArrayList<String> list=new ArrayList<>(JobModel.myLocations.values().size());
+//                    Collections.sort(list);
+//                    while(iterator.hasNext()){
+//                        list.add(iterator.next().toString());
+//                    }
+
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+                            android.R.layout.simple_list_item_1, android.R.id.text1, list);
+                    listView.setAdapter(adapter);
+
+                } else {
+                    fetchLocations(s, listView);
+
+                }
+                return false;
+            }
+        });
+        dialog.show();
     }
 
 //    get the number of page for the ViewPager

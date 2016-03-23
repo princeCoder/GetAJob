@@ -8,8 +8,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.text.Html;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -46,6 +51,11 @@ public class JobDetailActivityFragment extends Fragment {
     //Current job
     private Job mCurrentJob;
 
+    //Share action provider
+    ShareActionProvider mShareActionProvider;
+
+    MenuItem item;
+
     public JobDetailActivityFragment() {
     }
 
@@ -58,6 +68,24 @@ public class JobDetailActivityFragment extends Fragment {
 
         getActivity().registerReceiver(mServiceJobExistReceiver,
                 new IntentFilter(JobService.DOES_JOB_EXIST));
+        setHasOptionsMenu(true);;
+    }
+
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        inflater.inflate(R.menu.menu_job_detail, menu);
+        item = menu.findItem(R.id.menu_item_share);
+        mShareActionProvider = new ShareActionProvider(getActivity());
+        mShareActionProvider.setShareIntent(createShareIntent(mCurrentJob.getUrl()));
+        MenuItemCompat.setActionProvider(item, mShareActionProvider);
+    }
+
+
+    private Intent createShareIntent(String message) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT,
+                message);
+        return shareIntent;
     }
 
     @Override
@@ -108,10 +136,16 @@ public class JobDetailActivityFragment extends Fragment {
         mJobType=(TextView)rootView.findViewById(R.id.type);
         mRelocationAssiatance=(TextView)rootView.findViewById(R.id.relocation);
         mPostedDate=(TextView)rootView.findViewById(R.id.posted);
-        mKeywords=(TextView)rootView.findViewById(R.id.keyword);
+        mKeywords = (TextView) rootView.findViewById(R.id.keyword);
+
         bindData();
 
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     //Save the current job in the database

@@ -10,12 +10,15 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ListJobsFragment extends Fragment {
+public class ListJobsFragment extends Fragment{
 
     //Number of page
     private static  int NUM_PAGE=1;
@@ -25,6 +28,11 @@ public class ListJobsFragment extends Fragment {
 
     //ViewPager
     private ViewPager mViewPager;
+
+    private ImageButton btnNext, btnFinish;
+    private LinearLayout pager_indicator;
+    private int dotsCount;
+    private ImageView[] dots;
 
     //Selected Page
     private int mSelectedItemId=2;
@@ -45,6 +53,8 @@ public class ListJobsFragment extends Fragment {
         NUM_PAGE=getActivity().getIntent().getIntExtra(NUM_PAGE_TAG,1);
 
         mViewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
+        pager_indicator = (LinearLayout) rootView.findViewById(R.id.viewPagerCountDots);
+
         mViewPager.setAdapter(new MyAdapter(getFragmentManager()));
 
         mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -57,8 +67,13 @@ public class ListJobsFragment extends Fragment {
 
             @Override
             public void onPageSelected(int position) {
-                mSelectedItemId = position+1;
-//                mViewPager.setCurrentItem(mSelectedItemId);
+                mSelectedItemId = position + 1;
+
+                for (int i = 0; i < dotsCount; i++) {
+                    dots[i].setImageDrawable(getResources().getDrawable(R.drawable.nonselecteditem_dot));
+                }
+
+                dots[position].setImageDrawable(getResources().getDrawable(R.drawable.selecteditem_dot));
             }
 
             @Override
@@ -76,9 +91,33 @@ public class ListJobsFragment extends Fragment {
             mSelectedItemId=savedInstanceState.getInt("defaultpage",1);
         }
 
-//        mViewPager.setCurrentItem(mSelectedItemId);
+        setUiPageViewController();
         return rootView;
     }
+
+
+    private void setUiPageViewController() {
+
+        dotsCount = NUM_PAGE;
+        dots = new ImageView[dotsCount];
+
+        for (int i = 0; i < dotsCount; i++) {
+            dots[i] = new ImageView(getActivity());
+            dots[i].setImageDrawable(getResources().getDrawable(R.drawable.nonselecteditem_dot));
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+
+            params.setMargins(4, 0, 4, 0);
+
+            pager_indicator.addView(dots[i], params);
+        }
+
+        dots[0].setImageDrawable(getResources().getDrawable(R.drawable.selecteditem_dot));
+    }
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -111,7 +150,6 @@ public class ListJobsFragment extends Fragment {
             return JobsFragment.newInstance(position+1);
         }
     }
-
 
 
 }

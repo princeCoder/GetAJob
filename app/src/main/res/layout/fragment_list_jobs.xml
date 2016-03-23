@@ -6,6 +6,7 @@
 
     <LinearLayout android:layout_width="match_parent"
                   android:layout_height="match_parent"
+                  android:id="@+id/jobs_container"
                   android:orientation="vertical">
 
         <!--<android.support.design.widget.TabLayout-->
@@ -25,6 +26,23 @@
             android:layout_height="0px"
             android:layout_weight="1"
             android:background="@android:color/white" />
+
+        <RelativeLayout
+            android:id="@+id/viewPagerIndicator"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="5dp"
+            android:gravity="center">
+
+            <LinearLayout
+                android:id="@+id/viewPagerCountDots"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:orientation="horizontal" />
+        </RelativeLayout>
     </LinearLayout>
 
 </FrameLayout>

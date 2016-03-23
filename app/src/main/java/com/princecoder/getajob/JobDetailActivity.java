@@ -6,7 +6,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.princecoder.getajob.model.Job;
 
-public class JobDetailActivity extends AppCompatActivity {
+public class JobDetailActivity extends AppCompatActivity{
 
     public Toolbar mToolbar;
     @Override
@@ -40,4 +40,5 @@ public class JobDetailActivity extends AppCompatActivity {
             getSupportActionBar().setSubtitle(job.getTitle()+" Job detail");
         }
     }
+
 }

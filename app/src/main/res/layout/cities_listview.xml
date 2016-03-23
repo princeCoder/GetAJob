@@ -3,14 +3,33 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
-    <TextView
-        android:layout_marginTop="@dimen/activity_horizontal_margin"
-        android:layout_width="match_parent"
+    <RelativeLayout android:layout_width="match_parent"
+                    android:layout_height="75dp"
+        android:background="@color/colorPrimary">
+        <TextView
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Choose the Location"
+            android:gravity="center"/>
+    </RelativeLayout>
+    <android.support.v7.widget.SearchView
+        android:id="@+id/searchText"
+        android:layout_width = "fill_parent"
         android:layout_height="wrap_content"
-        android:text="Choose the Location"
-        android:gravity="center"/>
+        android:inputType="text"
+        android:saveEnabled="true"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"/>
     <ListView
         android:id="@+id/list"
+        android:layout_gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
