@@ -1,11 +1,14 @@
 package com.princecoder.getajob.adapter;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -83,8 +86,10 @@ public class RecyclerViewCursorAdapter extends RecyclerView.Adapter<RecyclerView
         public TextView mCompany;
         public TextView mDate;
         public ImageView mLogo;
+        public ImageButton mAction;
 
 
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         public ViewHolder(View view) {
             super(view);
             mTitle = (TextView) view.findViewById(R.id.job_title);
@@ -92,15 +97,17 @@ public class RecyclerViewCursorAdapter extends RecyclerView.Adapter<RecyclerView
             mCompany = (TextView) view.findViewById(R.id.company);
             mDate = (TextView) view.findViewById(R.id.job_posted_date);
             mLogo = (ImageView) view.findViewById(R.id.company_logo);
+            mAction = (ImageButton) view.findViewById(R.id.action_button);
+            mAction.setImageDrawable(mContext.getDrawable(R.mipmap.ic_action_minus));
             view.setClickable(true);
             view.setOnClickListener(this);
-            mLogo.setOnClickListener(this);
+            mAction.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
 
-            if(v.getId()==R.id.company_logo){
+            if(v.getId()==R.id.action_button){
                 //Handle the click on an element
                 if(selectedItem!=-1){
                     notifyItemChanged(selectedItem);

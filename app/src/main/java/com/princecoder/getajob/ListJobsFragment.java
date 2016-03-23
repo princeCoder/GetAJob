@@ -86,6 +86,7 @@ public class ListJobsFragment extends Fragment {
         if(NUM_PAGE==0){
             Snackbar.make(getView(), "No job found ", Snackbar.LENGTH_LONG).show();
         }
+        setRetainInstance(true);
     }
 
     @Override

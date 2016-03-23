@@ -63,7 +63,17 @@ public class JobDetailActivityFragment extends Fragment {
         View rootView=inflater.inflate(R.layout.fragment_job_detail, container, false);
 
         if(savedInstanceState==null){
-            mCurrentJob=getActivity().getIntent().getParcelableExtra(CURRENT_JOB);
+            Intent intent=getActivity().getIntent();
+            if((intent!=null)&&(intent.hasExtra(CURRENT_JOB))){ //Phones
+                mCurrentJob=getActivity().getIntent().getParcelableExtra(CURRENT_JOB);
+            }
+            else{ //Tablet
+                Bundle arguments = getArguments();
+                if (arguments != null) {
+                    mCurrentJob = arguments.getParcelable(CURRENT_JOB);
+                }
+            }
+
         }
         else{
             if(savedInstanceState.containsKey(CURRENT_JOB)){
@@ -82,7 +92,7 @@ public class JobDetailActivityFragment extends Fragment {
                 saveJob(mCurrentJob);
             }
         });
-        mApplyButton=(Button)rootView.findViewById(R.id.apply_btn_btn);
+        mApplyButton=(Button)rootView.findViewById(R.id.apply_btn);
         mApplyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -115,12 +125,12 @@ public class JobDetailActivityFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         //handle the Up navigation
-        getActivityCast().getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getActivityCast().onBackPressed();
-            }
-        });
+//        getActivity().getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                getActivityCast().onBackPressed();
+//            }
+//        });
     }
 
     @Override

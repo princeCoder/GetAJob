@@ -13,7 +13,7 @@
         android:layout_gravity="center_horizontal|top">
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerview_job"
+                android:id="@+id/recyclerview_saved_job"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"

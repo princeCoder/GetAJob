@@ -86,6 +86,7 @@ public class JobsFragment extends Fragment {
         //register the receiver
         getActivity().registerReceiver(mServiceJobsReceiver,
                 new IntentFilter(JobService.SERVICE_JOBS));
+//        setRetainInstance(true);
     }
 
     @Override
@@ -107,8 +108,12 @@ public class JobsFragment extends Fragment {
                 //@Todo display job details
                 Job job=mAdapter.getItem(id);
                 mListener.onJobSelectedListener(job);
-//                Intent intent=new Intent(getActivity(),JobDetailActivity.class);
-//                getActivity().startActivity(intent);
+            }
+
+            @Override
+            public void onSaveJob(int id, JobAdapterRecyclerView.ViewHolder vh) {
+                Job job=mAdapter.getItem(id);
+                mListener.onJobSavedListener(job);
             }
         });
 
@@ -201,6 +206,7 @@ public class JobsFragment extends Fragment {
 
     public interface OnJobSelectedListener{
         void onJobSelectedListener(Job job);
+        void onJobSavedListener(Job job);
     }
 
 

@@ -256,8 +256,6 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
 
                 if(mNumPage>0){ //We found jobs. So we need to save that recent search
 
-                    //@Todo delete that recent search if it exist already and save it again
-
                     RecentSearch search=new RecentSearch();
                     search.setTitle(mJob.getTitle());
                     search.setLocation(mJob.getLocation());

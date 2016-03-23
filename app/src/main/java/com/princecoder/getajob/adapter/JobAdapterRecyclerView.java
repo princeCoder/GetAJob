@@ -1,10 +1,13 @@
 package com.princecoder.getajob.adapter;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -46,10 +49,12 @@ public class JobAdapterRecyclerView extends RecyclerView.Adapter<JobAdapterRecyc
         public TextView mCompany;
         public TextView mDate;
         public ImageView mLogo;
+        public ImageButton mAction;
 
         //The row index
         public int position;
 
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         public ViewHolder(View view) {
             super(view);
             mTitle = (TextView) view.findViewById(R.id.job_title);
@@ -57,6 +62,7 @@ public class JobAdapterRecyclerView extends RecyclerView.Adapter<JobAdapterRecyc
             mCompany = (TextView) view.findViewById(R.id.company);
             mDate = (TextView) view.findViewById(R.id.job_posted_date);
             mLogo = (ImageView) view.findViewById(R.id.company_logo);
+            mAction = (ImageButton) view.findViewById(R.id.action_button);
             view.setClickable(true);
 
         }
@@ -88,6 +94,18 @@ public class JobAdapterRecyclerView extends RecyclerView.Adapter<JobAdapterRecyc
                     }
                     setSelectedItem(vh.getAdapterPosition());
                     mCallback.onClick(vh.getAdapterPosition(), vh);
+                    notifyItemChanged(getSelectedItem());
+                }
+            });
+            vh.mAction.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //Handle the click on an element
+                    if (selectedItem != -1) {
+                        notifyItemChanged(selectedItem);
+                    }
+                    setSelectedItem(vh.getAdapterPosition());
+                    mCallback.onSaveJob(vh.getAdapterPosition(), vh);
                     notifyItemChanged(getSelectedItem());
                 }
             });
@@ -148,6 +166,7 @@ public class JobAdapterRecyclerView extends RecyclerView.Adapter<JobAdapterRecyc
 
     public interface ViewHolderOnClickHandler{
         void onClick(int id, ViewHolder vh);
+        void onSaveJob(int id, ViewHolder vh);
     }
 }
 

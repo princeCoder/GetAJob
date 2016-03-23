@@ -1,6 +1,7 @@
 package com.princecoder.getajob;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,9 +9,11 @@ import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -162,19 +165,47 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onJobSelectedListener(Job job) {
         if(job!=null){
-            Intent intent = new Intent(this, JobDetailActivity.class)
-                    .putExtra(JobDetailActivityFragment.CURRENT_JOB, job);
-            intent.putExtra(JobsFragment.JOB_TAG, job);
-            startActivity(intent);
+            if(getResources().getBoolean(R.bool.muilti_columns)){//This is a Tablet
+                Bundle args = new Bundle();
+                args.putParcelable(JobDetailActivityFragment.CURRENT_JOB, job);
+
+                JobDetailActivityFragment fragment = new JobDetailActivityFragment();
+                fragment.setArguments(args);
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.left_container, fragment, "Detail_fragment").commit();
+
+            }
+            else{ //This is a phone
+                Intent intent = new Intent(this, JobDetailActivity.class)
+                        .putExtra(JobDetailActivityFragment.CURRENT_JOB, job);
+                startActivity(intent);
+            }
         }
     }
 
     @Override
     public void onDeleteJobListener(Job job) {
-        Intent intent = new Intent(this, JobService.class);
-        intent.setAction(JobService.DELETE_JOB);
-        intent.putExtra(JobsFragment.JOB_TAG, job);
-        startService(intent);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Do you realy want to remove it from your saved jobs?");
+        final Job j=job;
+        final Intent intent = new Intent(this, JobService.class);
+        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+                intent.setAction(JobService.DELETE_JOB);
+                intent.putExtra(JobsFragment.JOB_TAG, j);
+                startService(intent);
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                //TODO
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override
@@ -188,4 +219,5 @@ public class MainActivity extends AppCompatActivity
         intent.putExtra(JobsFragment.JOB_TAG, job);
         startService(intent);
     }
+
 }

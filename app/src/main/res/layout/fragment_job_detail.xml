@@ -112,7 +112,7 @@
 
                 <Button android:layout_width="100dp"
                              android:layout_height="40dp"
-                             android:id="@+id/apply_btn_btn"
+                             android:id="@+id/apply_btn"
                              android:text="Apply"
                              android:gravity="center"
                              android:textColor="@color/white"
