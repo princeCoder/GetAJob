@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.princecoder.getajob.adapter.JobAdapterRecyclerView;
+import com.princecoder.getajob.adapter.SearchJobRecyclerViewAdapter;
 import com.princecoder.getajob.model.Job;
 import com.princecoder.getajob.sync.JobService;
 
@@ -30,7 +30,7 @@ public class JobsFragment extends Fragment {
     private TextView emptyView;
 
     // My adapter
-    private JobAdapterRecyclerView mAdapter;
+    private SearchJobRecyclerViewAdapter mAdapter;
 
     // My recyclerView
     private RecyclerView mRecyclerView;
@@ -97,9 +97,9 @@ public class JobsFragment extends Fragment {
 
         mProgressBar=(ProgressBar) myView.findViewById(R.id.progressImage);
 
-        mAdapter=new JobAdapterRecyclerView(getContext(), new JobAdapterRecyclerView.ViewHolderOnClickHandler() {
+        mAdapter=new SearchJobRecyclerViewAdapter(getContext(), new SearchJobRecyclerViewAdapter.ViewHolderOnClickHandler() {
             @Override
-            public void onClick(int id, JobAdapterRecyclerView.ViewHolder vh) {
+            public void onClick(int id, SearchJobRecyclerViewAdapter.ViewHolder vh) {
                 //@Todo display job details
                 Job job=mAdapter.getItem(id);
                 mListener.onJobSelectedListener(job);
@@ -107,7 +107,7 @@ public class JobsFragment extends Fragment {
             }
 
             @Override
-            public void onSaveJob(int id, JobAdapterRecyclerView.ViewHolder vh) {
+            public void onSaveJob(int id, SearchJobRecyclerViewAdapter.ViewHolder vh) {
                 Job job=mAdapter.getItem(id);
                 mListener.onJobSavedListener(job);
             }

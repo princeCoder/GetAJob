@@ -5,21 +5,20 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,15 +48,13 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
     private EditText mTitleEdt;
     private EditText mLocation;
     private Button mSearchBtn;
-    private ViewPager mViewPager;
-    private FragmentPagerAdapter mAdapterViewPager;
-    private Toolbar mToolbar;
     private int mNumPage;
     private Job mJob=new Job();
 
 
     private RecyclerView mRecyclerView;
     private RecentRecyclerViewAdapter mAdapter;
+
     //    private TextView mEmptyView;
     private static final int CURSOR_LOADER_ID = 0;
 
@@ -91,6 +88,9 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
 
         getActivity().registerReceiver(mRecentSearchReceiver,
                 new IntentFilter(JobService.SAVE_RECENT_SEARCH));
+
+        getActivity().registerReceiver(mDeleteRecentReceiver,
+                new IntentFilter(JobService.DELETE_RECENT_SEARCH));
     }
 
     @Override
@@ -137,15 +137,39 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
         mAdapter=new RecentRecyclerViewAdapter(getActivity(), new RecentRecyclerViewAdapter.RecentAdapterOnClickHandler() {
             @Override
             public void onClick(RecentSearch search, RecentRecyclerViewAdapter.ViewHolder vh) {
-//                mListener.onSearchSelectedListener(search);
 
                 Intent intent = new Intent(getActivity(), JobService.class);
                 intent.setAction(JobService.FETCH_PAGES_FROM_INTERNET);
                 Job job=new Job();
                 job.setTitle(search.getTitle());
                 job.setLocation(search.getLocation());
-                intent.putExtra(JobsFragment.JOB_TAG, job);
+                intent.putExtra(JobService.JOB_TAG, job);
                 getActivity().startService(intent);
+
+            }
+
+            @Override
+            public void onDeleteRecentSearch(final RecentSearch search, RecentRecyclerViewAdapter.ViewHolder vh) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Do you realy want to remove it from your recent log?");
+                builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        Intent intent = new Intent(getActivity(), JobService.class);
+                        intent.setAction(JobService.DELETE_RECENT_SEARCH);
+                        intent.putExtra(JobService.RECENT_TAG, search);
+                        getActivity().startService(intent);
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //TODO
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
 
             }
         });
@@ -203,6 +227,7 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
         //Unregister the brodcast receiver
         getActivity().unregisterReceiver(mServicePagesReceiver);
         getActivity().unregisterReceiver(mRecentSearchReceiver);
+        getActivity().unregisterReceiver(mDeleteRecentReceiver);
     }
 
     public void fetchLocations(String searchString, ListView listview) {
@@ -219,9 +244,6 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
         listview.setAdapter(adapter);
     }
 
-    public void setMyAdapter(){
-
-    }
 
     public void searchCitiesList() {
         final Dialog dialog = new Dialog(getActivity());
@@ -269,14 +291,6 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
             @Override
             public boolean onQueryTextChange(String s) {
                 if (s.isEmpty()) {
-//
-//                    Iterator iterator=JobModel.myLocations.keySet().iterator();
-//                    ArrayList<String> list=new ArrayList<>(JobModel.myLocations.values().size());
-//                    Collections.sort(list);
-//                    while(iterator.hasNext()){
-//                        list.add(iterator.next().toString());
-//                    }
-
                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
                             android.R.layout.simple_list_item_1, android.R.id.text1, list);
                     listView.setAdapter(adapter);
@@ -348,9 +362,18 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
     private BroadcastReceiver mRecentSearchReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (JobService.SAVE_RECENT_SEARCH.equals(intent.getAction())) {
-                String message = intent.getStringExtra(JobService.MESSAGE);
-                Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
+//            if (JobService.SAVE_RECENT_SEARCH.equals(intent.getAction())) {
+//                String message = intent.getStringExtra(JobService.MESSAGE);
+//                Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
+//            }
+        }
+    };
+
+    private BroadcastReceiver mDeleteRecentReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (JobService.DELETE_RECENT_SEARCH.equals(intent.getAction())) {
+                restartLoader();
             }
         }
     };

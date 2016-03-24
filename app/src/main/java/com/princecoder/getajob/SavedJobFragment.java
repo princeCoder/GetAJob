@@ -18,7 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.princecoder.getajob.adapter.RecyclerViewCursorAdapter;
+import com.princecoder.getajob.adapter.SavedJobRecyclerViewAdapter;
 import com.princecoder.getajob.data.JobContract;
 import com.princecoder.getajob.model.Job;
 import com.princecoder.getajob.sync.JobService;
@@ -30,7 +30,7 @@ import com.princecoder.getajob.sync.JobService;
 public class SavedJobFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private RecyclerView mRecyclerView;
-    private RecyclerViewCursorAdapter mAdapter;
+    private SavedJobRecyclerViewAdapter mAdapter;
 //    private TextView mEmptyView;
     private static final int CURSOR_LOADER_ID = 0;
 
@@ -82,15 +82,15 @@ public class SavedJobFragment extends Fragment implements LoaderManager.LoaderCa
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_saved_job);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mAdapter=new RecyclerViewCursorAdapter(getActivity(), new RecyclerViewCursorAdapter.JobAdapterOnClickHandler() {
+        mAdapter=new SavedJobRecyclerViewAdapter(getActivity(), new SavedJobRecyclerViewAdapter.JobAdapterOnClickHandler() {
             @Override
-            public void onClick(Job job, RecyclerViewCursorAdapter.ViewHolder vh) {
+            public void onClick(Job job, SavedJobRecyclerViewAdapter.ViewHolder vh) {
                 mListener.onJobSelectedListener(job);
                 mPosition=vh.getAdapterPosition();
             }
 
             @Override
-            public void onDeleteJob(Job job, RecyclerViewCursorAdapter.ViewHolder vh) {
+            public void onDeleteJob(Job job, SavedJobRecyclerViewAdapter.ViewHolder vh) {
                 mListener.onDeleteJobListener(job);
             }
         });
@@ -177,6 +177,8 @@ public class SavedJobFragment extends Fragment implements LoaderManager.LoaderCa
         @Override
         public void onReceive(Context context, Intent intent) {
             if (JobService.DELETE_JOB.equals(intent.getAction())) {
+                mPosition=-1;
+                mAdapter.setSelectedItem(mPosition);
                restartLoader();
             }
         }

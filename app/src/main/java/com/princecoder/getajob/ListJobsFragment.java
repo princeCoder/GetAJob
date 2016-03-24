@@ -90,7 +90,7 @@ public class ListJobsFragment extends Fragment{
         else {
             mSelectedItemId=savedInstanceState.getInt("defaultpage",1);
         }
-
+        if(NUM_PAGE>1) //We only show indicator if we have at least 2 pages
         setUiPageViewController();
         return rootView;
     }

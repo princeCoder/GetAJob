@@ -1,11 +1,11 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingTop="@dimen/horizontal_margin"
-                android:paddingBottom="@dimen/horizontal_margin"
-                tools:context="com.princecoder.getajob.JobDetailActivityFragment"
-                tools:showIn="@layout/activity_job_detail">
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:paddingTop="@dimen/horizontal_margin"
+             android:paddingBottom="@dimen/horizontal_margin"
+             tools:context="com.princecoder.getajob.JobDetailActivityFragment"
+             tools:showIn="@layout/activity_job_detail">
     <ScrollView android:layout_width="match_parent"
                 android:layout_height="match_parent">
         <LinearLayout android:layout_width="match_parent"
@@ -14,7 +14,7 @@
                       android:layout_marginStart="@dimen/activity_vertical_margin"
                       android:layout_marginRight="@dimen/activity_vertical_margin"
                       android:layout_marginEnd="@dimen/activity_vertical_margin"
-            android:orientation="vertical">
+                      android:orientation="vertical">
 
             <!-- Header-->
 
@@ -30,9 +30,9 @@
                     <!--suppress AndroidLintContentDescription -->
                     <com.princecoder.getajob.AspectRatioImageView
                         android:id="@+id/company_logo"
-                        android:layout_width="@dimen/icon_dimens"
+                        android:layout_width="120dp"
                         android:layout_gravity="center_vertical"
-                        android:layout_height="@dimen/icon_dimens"
+                        android:layout_height="120dp"
                         android:layout_marginStart="@dimen/vertical_margin"
                         android:layout_marginLeft="@dimen/vertical_margin"/>
 
@@ -51,7 +51,7 @@
                             android:layout_height="0dp"
                             android:layout_weight="1"
                             android:textColor="@color/primary_text"
-                            android:textAppearance="?attr/textAppearanceListItem"
+                            style="?android:attr/textAppearanceMedium"
                             android:paddingRight="@dimen/vertical_margin"
                             android:paddingEnd="@dimen/vertical_margin"
                             android:fontFamily="sans-serif-condensed"
@@ -68,7 +68,7 @@
                             android:paddingRight="@dimen/vertical_margin"
                             android:paddingEnd="@dimen/vertical_margin"
                             android:textColor="@color/secondary_text"
-                            android:textAppearance="?attr/textAppearanceListItemSmall"
+                            style="?android:attr/textAppearanceMedium"
                             android:fontFamily="sans-serif-condensed"
                             android:singleLine="true"
                             android:ellipsize="end" />
@@ -83,7 +83,7 @@
                             android:paddingRight="@dimen/vertical_margin"
                             android:paddingEnd="@dimen/vertical_margin"
                             android:textColor="@color/secondary_text"
-                            android:textAppearance="?attr/textAppearanceListItemSmall"
+                            style="?android:attr/textAppearanceMedium"
                             android:fontFamily="sans-serif-condensed"
                             android:singleLine="true"
                             android:ellipsize="end" />
@@ -93,7 +93,7 @@
 
             <!-- Divider-->
             <View android:layout_width="match_parent"
-                  android:layout_margin="@dimen/activity_horizontal_margin"
+                  android:layout_margin="5dp"
                   android:layout_height="1dp"
                   android:background="@color/darker_gray"/>
 
@@ -101,30 +101,30 @@
             <RelativeLayout android:layout_width="match_parent"
                             android:layout_height="wrap_content">
                 <Button android:layout_width="100dp"
-                             android:layout_height="40dp"
-                             android:id="@+id/save_btn"
-                             android:text="Save"
+                        android:layout_height="40dp"
+                        android:id="@+id/save_btn"
+                        android:text="Save"
                         android:gravity="center"
                         android:textColor="@color/white"
-                             android:background="@color/darker_gray"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"/>
+                        android:background="@color/darker_gray"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"/>
 
                 <Button android:layout_width="100dp"
-                             android:layout_height="40dp"
-                             android:id="@+id/apply_btn"
-                             android:text="Apply"
-                             android:gravity="center"
-                             android:textColor="@color/white"
-                             android:background="@color/colorPrimary"
-                             android:layout_alignParentRight="true"
-                             android:layout_alignParentEnd="true"/>
+                        android:layout_height="40dp"
+                        android:id="@+id/apply_btn"
+                        android:text="Apply"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:background="@color/colorPrimary"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"/>
 
             </RelativeLayout>
 
             <!-- Divider-->
             <View android:layout_width="match_parent"
-                  android:layout_margin="@dimen/activity_horizontal_margin"
+                  android:layout_margin="5dp"
                   android:layout_height="1dp"
                   android:background="@color/darker_gray"/>
 
@@ -132,7 +132,7 @@
 
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:textAppearance="?attr/textAppearanceListItemSmall"
+                      style="?android:attr/textAppearanceMedium"
                       android:text="Description: "
                       android:id="@+id/description"
                       android:gravity="fill_horizontal"
@@ -142,7 +142,7 @@
 
             <!-- Divider-->
             <View android:layout_width="match_parent"
-                  android:layout_margin="@dimen/activity_horizontal_margin"
+                  android:layout_margin="5dp"
                   android:layout_height="1dp"
                   android:background="@color/darker_gray"/>
 
@@ -151,29 +151,30 @@
             <RelativeLayout android:layout_width="match_parent"
                             android:layout_height="wrap_content">
                 <TextView android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceListItemSmall"
-                        android:text="Type: "
-                        android:id="@+id/typelbl"
+                          android:layout_height="wrap_content"
+                          style="?android:attr/textAppearanceMedium"
+                          android:text="Type: "
+                          android:id="@+id/typelbl"
                           android:layout_centerVertical="true"
-                        android:gravity="center"
-                        android:textColor="@color/secondary_text"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"/>
+                          android:gravity="center"
+                          android:textColor="@color/secondary_text"
+                          android:layout_alignParentLeft="true"
+                          android:layout_alignParentStart="true"/>
 
                 <TextView android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/type"
-                        android:layout_centerVertical="true"
-                        android:gravity="center"
-                        android:textColor="@color/primary_text"
-                        android:layout_toRightOf="@+id/typelbl"/>
+                          android:layout_height="wrap_content"
+                          android:id="@+id/type"
+                          android:layout_centerVertical="true"
+                          style="?android:attr/textAppearanceMedium"
+                          android:gravity="center"
+                          android:textColor="@color/primary_text"
+                          android:layout_toRightOf="@+id/typelbl"/>
 
             </RelativeLayout>
 
             <!-- Divider-->
             <View android:layout_width="match_parent"
-                  android:layout_margin="@dimen/activity_horizontal_margin"
+                  android:layout_margin="5dp"
                   android:layout_height="1dp"
                   android:background="@color/darker_gray"/>
 
@@ -183,9 +184,9 @@
                             android:layout_height="wrap_content">
                 <TextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:textAppearance="?attr/textAppearanceListItemSmall"
                           android:text="Relocation assistance: "
                           android:id="@+id/relocationlbl"
+                          style="?android:attr/textAppearanceMedium"
                           android:gravity="center"
                           android:layout_centerVertical="true"
                           android:textColor="@color/secondary_text"
@@ -197,6 +198,7 @@
                           android:id="@+id/relocation"
                           android:gravity="center"
                           android:text="YES"
+                          style="?android:attr/textAppearanceMedium"
                           android:layout_centerVertical="true"
                           android:textColor="@color/primary_text"
                           android:layout_toRightOf="@+id/relocationlbl"/>
@@ -205,7 +207,7 @@
 
             <!-- Divider-->
             <View android:layout_width="match_parent"
-                  android:layout_margin="@dimen/activity_horizontal_margin"
+                  android:layout_margin="5dp"
                   android:layout_height="1dp"
                   android:background="@color/darker_gray"/>
 
@@ -215,7 +217,7 @@
                             android:layout_height="wrap_content">
                 <TextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:textAppearance="?attr/textAppearanceListItemSmall"
+                          style="?android:attr/textAppearanceMedium"
                           android:text="Posted: "
                           android:id="@+id/postedlbl"
                           android:gravity="center"
@@ -230,6 +232,7 @@
                           android:layout_centerVertical="true"
                           android:gravity="center"
                           android:text="02/15/16"
+                          style="?android:attr/textAppearanceMedium"
                           android:textColor="@color/primary_text"
                           android:layout_toRightOf="@+id/postedlbl"/>
 
@@ -237,7 +240,7 @@
 
             <!-- Divider-->
             <View android:layout_width="match_parent"
-                  android:layout_margin="@dimen/activity_horizontal_margin"
+                  android:layout_margin="5dp"
                   android:layout_height="1dp"
                   android:background="@color/darker_gray"/>
 
@@ -247,7 +250,7 @@
                             android:layout_height="wrap_content">
                 <TextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:textAppearance="?attr/textAppearanceListItemSmall"
+                          style="?android:attr/textAppearanceMedium"
                           android:text="Keywords: "
                           android:id="@+id/keywordlbl"
                           android:gravity="center"
@@ -258,6 +261,7 @@
                 <TextView android:layout_width="match_parent"
                           android:layout_height="wrap_content"
                           android:id="@+id/keyword"
+                          style="?android:attr/textAppearanceMedium"
                           android:layout_centerVertical="true"
                           android:gravity="fill_horizontal"
                           android:text="02/15/16"

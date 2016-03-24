@@ -21,7 +21,7 @@ import com.princecoder.getajob.utils.Utility;
 /**
  * Created by Prinzly Ngotoum on 3/13/16.
  */
-public class RecyclerViewCursorAdapter extends RecyclerView.Adapter<RecyclerViewCursorAdapter.ViewHolder> {
+public class SavedJobRecyclerViewAdapter extends RecyclerView.Adapter<SavedJobRecyclerViewAdapter.ViewHolder> {
 
     private Cursor mCursor;
     private Context mContext;
@@ -159,7 +159,7 @@ public class RecyclerViewCursorAdapter extends RecyclerView.Adapter<RecyclerView
 
 
     // Constructor
-    public RecyclerViewCursorAdapter(Context context, JobAdapterOnClickHandler vh) {
+    public SavedJobRecyclerViewAdapter(Context context, JobAdapterOnClickHandler vh) {
         mContext = context;
         mCallback = vh;
     }

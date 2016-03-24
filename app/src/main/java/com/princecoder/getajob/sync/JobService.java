@@ -33,6 +33,7 @@ public class JobService extends IntentService{
     public static final String FETCH_PAGES_FROM_INTERNET = "com.princecoder.sync.action.FETCH_PAGES_FROM_INTERNET";
     public static final String FETCH_SAVED_JOB = "com.princecoder.sync.action.FETCH_SAVED_JOB";
     public static final String DELETE_JOB = "com.princecoder.sync.action.DELETE_JOB";
+    public static final String DELETE_RECENT_SEARCH = "com.princecoder.sync.action.DELETE_RECENT_SEARCH";
     public static final String SAVE_JOB = "com.princecoder.sync.action.SAVE_JOB";
     public static final String DOES_JOB_EXIST = "com.princecoder.sync.action.DOES_JOB_EXIST";
     public static final String SAVE_RECENT_SEARCH = "com.princecoder.sync.action.SAVE_RECENT_SEARCH";
@@ -118,6 +119,10 @@ public class JobService extends IntentService{
                     saveIntent.putExtra(MESSAGE,"Job already saved");
                     getApplicationContext().sendBroadcast(saveIntent);
                 }
+            } else if (DELETE_RECENT_SEARCH.equals(action)) {
+                //We delete the recent search
+                RecentSearch search=intent.getParcelableExtra(RECENT_TAG);
+                deleteRecentSearch(search);
             }
             else if (SAVE_RECENT_SEARCH.equals(action)){
 
@@ -133,9 +138,14 @@ public class JobService extends IntentService{
         if(recent!=null) {
             //Selection clause
             String mSelectionClause = JobContract.RecentEntry.TITLE + " = ? AND " +JobContract.RecentEntry.LOCATION + " = ?";
+
             //Selection Argument
             String[] selectionArgs = new String[]{recent.getTitle(),recent.getLocation()!=null?recent.getLocation():""};
             getContentResolver().delete(JobContract.RecentEntry.CONTENT_URI, mSelectionClause, selectionArgs);
+
+            // We broadcast the response to the fragment
+            Intent intent = new Intent(DELETE_RECENT_SEARCH);
+            getApplicationContext().sendBroadcast(intent);
         }
     }
 
@@ -153,9 +163,9 @@ public class JobService extends IntentService{
             getContentResolver().insert(JobContract.RecentEntry.CONTENT_URI, values);
 
             // We broadcast the response to the fragment
-            Intent saveIntent = new Intent(SAVE_RECENT_SEARCH);
-            saveIntent.putExtra(MESSAGE, "Save recent search");
-            getApplicationContext().sendBroadcast(saveIntent);
+//            Intent saveIntent = new Intent(SAVE_RECENT_SEARCH);
+//            saveIntent.putExtra(MESSAGE, "Save recent search");
+//            getApplicationContext().sendBroadcast(saveIntent);
     }
 
     /**

@@ -24,7 +24,7 @@ import com.princecoder.getajob.model.RecentSearch;
 import com.princecoder.getajob.sync.JobService;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, SavedJobFragment.OnJobSelectedListener, SearchFragment.OnSearchSelectedListener,RecentSearchFragment.OnSearchSelectedListener{
+        implements NavigationView.OnNavigationItemSelectedListener, SavedJobFragment.OnJobSelectedListener, SearchFragment.OnSearchSelectedListener{
 
     private String[] mDrawerTitles;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -51,16 +51,6 @@ public class MainActivity extends AppCompatActivity
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-
-//        mTitle = mDrawerTitle = getTitle();
         mDrawerTitles = getResources().getStringArray(R.array.nav_titles);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(
@@ -195,6 +185,12 @@ public class MainActivity extends AppCompatActivity
                 intent.setAction(JobService.DELETE_JOB);
                 intent.putExtra(JobsFragment.JOB_TAG, j);
                 startService(intent);
+
+                if(getResources().getBoolean(R.bool.muilti_columns)){
+                    JobDetailActivityFragment fragment = (JobDetailActivityFragment)getSupportFragmentManager().findFragmentByTag("Detail_fragment");
+                    if(fragment!=null)
+                    getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                }
                 dialog.dismiss();
             }
         });

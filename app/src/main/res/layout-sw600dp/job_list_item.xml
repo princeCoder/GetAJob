@@ -1,14 +1,16 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                    android:layout_width="match_parent"
-                                    android:elevation="@dimen/card_elevation"
-                                    android:id="@+id/main_container"
-                                    android:background="@drawable/touch_selector"
-                                    android:layout_marginTop="1dp"
-                                    android:layout_height="@dimen/list_item_height">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:elevation="@dimen/card_elevation"
+                android:id="@+id/main_container"
+                android:background="@drawable/touch_selector"
+                android:layout_marginTop="2dp"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="3"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="@dimen/horizontal_margin"
         android:layout_marginBottom="@dimen/horizontal_margin">
@@ -24,8 +26,7 @@
 
         <LinearLayout android:layout_width="0dp"
                       android:layout_weight="4"
-
-                      android:layout_height="match_parent"
+                      android:layout_height="wrap_content"
                       android:layout_gravity="center_vertical"
                       android:layout_marginLeft="@dimen/vertical_margin"
                       android:orientation="vertical">
@@ -36,9 +37,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:textColor="@color/primary_text"
-                android:textAppearance="?attr/textAppearanceListItem"
-                android:paddingRight="@dimen/vertical_margin"
-                android:paddingEnd="@dimen/vertical_margin"
+                style="?android:attr/textAppearanceLarge"
                 android:fontFamily="sans-serif-condensed"
                 android:ellipsize="end"
                 android:maxLines="1" />
@@ -52,7 +51,7 @@
                 android:paddingRight="@dimen/vertical_margin"
                 android:paddingEnd="@dimen/vertical_margin"
                 android:textColor="@color/secondary_text"
-                android:textAppearance="?attr/textAppearanceListItemSmall"
+                style="?android:attr/textAppearanceMedium"
                 android:fontFamily="sans-serif-condensed"
                 android:singleLine="true"
                 android:ellipsize="end" />
@@ -63,16 +62,14 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:maxLines="1"
-                android:paddingRight="@dimen/vertical_margin"
-                android:paddingEnd="@dimen/vertical_margin"
                 android:textColor="@color/secondary_text"
-                android:textAppearance="?attr/textAppearanceListItemSmall"
+                style="?android:attr/textAppearanceLarge"
                 android:fontFamily="sans-serif-condensed"
                 android:singleLine="true"
                 android:ellipsize="end" />
             <RelativeLayout android:layout_width="match_parent"
                             android:layout_height="0dp"
-                android:layout_weight="1">
+                            android:layout_weight="1">
                 <TextView
                     android:id="@+id/date_lbl"
                     android:layout_width="wrap_content"
@@ -86,14 +83,13 @@
                     android:layout_centerVertical="true"
                     android:paddingRight="@dimen/vertical_margin"
                     android:paddingEnd="@dimen/vertical_margin"
-                    android:textColor="@color/primary_text"
-                    android:textAppearance="?attr/textAppearanceListItemSmall"
+                    style="?android:attr/textAppearanceLarge"
                     android:fontFamily="sans-serif-condensed"
                     android:singleLine="true"
                     android:ellipsize="end" />
                 <TextView
                     android:id="@+id/job_posted_date"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_alignParentRight="true"
@@ -103,10 +99,8 @@
                     android:gravity="center_vertical"
                     android:text=" April 12"
                     android:layout_centerVertical="true"
-                    android:paddingRight="@dimen/vertical_margin"
-                    android:paddingEnd="@dimen/vertical_margin"
                     android:textColor="@color/colorAccent"
-                    android:textAppearance="?attr/textAppearanceListItemSmall"
+                    style="?android:attr/textAppearanceMedium"
                     android:fontFamily="sans-serif-condensed"
                     android:singleLine="true"
                     android:ellipsize="end" />
@@ -114,14 +108,13 @@
         </LinearLayout>
         <ImageButton
             android:id="@+id/action_button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="2"
             android:layout_gravity="center_vertical"
             android:src="@mipmap/ic_action_trash"
             android:background="@null"
             android:visibility="invisible"
-            android:layout_marginRight="@dimen/vertical_margin"
-            android:layout_marginEnd="@dimen/vertical_margin"
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

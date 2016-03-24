@@ -21,7 +21,7 @@ import java.util.ArrayList;
 /**
  * Created by Prinzly Ngotoum on 3/13/16.
  */
-public class JobAdapterRecyclerView extends RecyclerView.Adapter<JobAdapterRecyclerView.ViewHolder>{
+public class SearchJobRecyclerViewAdapter extends RecyclerView.Adapter<SearchJobRecyclerViewAdapter.ViewHolder>{
     // Context
     Context mContext;
 
@@ -36,7 +36,7 @@ public class JobAdapterRecyclerView extends RecyclerView.Adapter<JobAdapterRecyc
     //Current element selected
     private int selectedItem=-1;
 
-    public JobAdapterRecyclerView(Context c,ViewHolderOnClickHandler vh) {
+    public SearchJobRecyclerViewAdapter(Context c, ViewHolderOnClickHandler vh) {
         mContext = c;
         mCallback=vh;
     }

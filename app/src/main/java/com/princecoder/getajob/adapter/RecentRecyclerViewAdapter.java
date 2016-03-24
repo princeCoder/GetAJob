@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.princecoder.getajob.R;
@@ -19,9 +20,6 @@ public class RecentRecyclerViewAdapter extends RecyclerView.Adapter<RecentRecycl
 
     private Cursor mCursor;
     private Context mContext;
-
-    //Current element selected
-    private int selectedItem=-1;
 
     // Click handler callback
     RecentAdapterOnClickHandler mCallback;
@@ -47,7 +45,6 @@ public class RecentRecyclerViewAdapter extends RecyclerView.Adapter<RecentRecycl
 
     @Override
     public int getItemCount() {
-//        return 0;
         if ( null == mCursor ) return 0;
         int count=mCursor.getCount();
         return count;
@@ -71,29 +68,31 @@ public class RecentRecyclerViewAdapter extends RecyclerView.Adapter<RecentRecycl
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public TextView mTitle;
         public TextView mLocation;
-
+        public ImageButton mAction;
 
         public ViewHolder(View view) {
             super(view);
             mTitle = (TextView) view.findViewById(R.id.job_title);
             mLocation = (TextView) view.findViewById(R.id.job_location);
-
+            mAction = (ImageButton) view.findViewById(R.id.action_button);
             view.setClickable(true);
             view.setOnClickListener(this);
+            mAction.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-
-            //Handle the click on an element
-            if(selectedItem!=-1){
-                notifyItemChanged(selectedItem);
+            if(v.getId()==R.id.action_button){
+                mCursor.moveToPosition(getAdapterPosition());
+                mCallback.onDeleteRecentSearch(getCurrentSearch(), this);
             }
-            setSelectedItem(getAdapterPosition());
-            mCursor.moveToPosition(getSelectedItem());
+            else{
+                //Handle the click on an element
+                mCursor.moveToPosition(getAdapterPosition());
 
-            mCallback.onClick(getCurrentSearch(), this);
-            notifyItemChanged(getSelectedItem());
+                mCallback.onClick(getCurrentSearch(), this);
+            }
+
         }
     }
 
@@ -105,20 +104,6 @@ public class RecentRecyclerViewAdapter extends RecyclerView.Adapter<RecentRecycl
         return search;
     }
 
-    /**
-     * Get the selected Item Index
-     * @return
-     */
-    public int getSelectedItem() {
-        return selectedItem;
-    }
-
-
-    public void setSelectedItem(int selectedItem) {
-        this.selectedItem = selectedItem;
-    }
-
-
     // Constructor
     public RecentRecyclerViewAdapter(Context context, RecentAdapterOnClickHandler vh) {
         mContext = context;
@@ -128,6 +113,7 @@ public class RecentRecyclerViewAdapter extends RecyclerView.Adapter<RecentRecycl
     // Interface to handle the Item Click listener on the View Holder
     public interface RecentAdapterOnClickHandler {
         void onClick(RecentSearch search, ViewHolder vh);
+        void onDeleteRecentSearch(RecentSearch search, ViewHolder vh);
     }
 
 }
