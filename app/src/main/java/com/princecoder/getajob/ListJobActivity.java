@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.princecoder.getajob.model.Job;
-import com.princecoder.getajob.sync.JobService;
+import com.princecoder.getajob.service.JobService;
 
 public class ListJobActivity extends AppCompatActivity implements JobsFragment.OnJobSelectedListener {
 

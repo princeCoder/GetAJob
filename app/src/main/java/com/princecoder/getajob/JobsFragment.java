@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.princecoder.getajob.adapter.SearchJobRecyclerViewAdapter;
 import com.princecoder.getajob.model.Job;
-import com.princecoder.getajob.sync.JobService;
+import com.princecoder.getajob.service.JobService;
 
 import java.util.ArrayList;
 

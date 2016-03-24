@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.princecoder.getajob.model.Job;
-import com.princecoder.getajob.sync.JobService;
+import com.princecoder.getajob.service.JobService;
 import com.princecoder.getajob.utils.Utility;
 
 /**

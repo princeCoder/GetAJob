@@ -1,6 +1,7 @@
 package com.princecoder.getajob;
 
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,7 +22,8 @@ import android.view.MenuItem;
 
 import com.princecoder.getajob.model.Job;
 import com.princecoder.getajob.model.RecentSearch;
-import com.princecoder.getajob.sync.JobService;
+import com.princecoder.getajob.service.JobService;
+import com.princecoder.getajob.sync.JobSyncAdapter;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, SavedJobFragment.OnJobSelectedListener, SearchFragment.OnSearchSelectedListener{
@@ -69,8 +71,11 @@ public class MainActivity extends AppCompatActivity
             defaultViewIndex = Integer.parseInt(prefs.getString("pref_startFragment","0"));
             //Set the view to display by default
             selectItem(defaultViewIndex);
-        };
+        }
+        JobSyncAdapter.initializeSyncAdapter(this);
+
     }
+
 
     @Override
     public void onBackPressed() {
@@ -216,4 +221,14 @@ public class MainActivity extends AppCompatActivity
         startService(intent);
     }
 
+    public void updateWidgets() {
+        Context context = getApplicationContext();
+        // Setting the package ensures that only components in our app will receive the broadcast
+        Intent dataUpdatedIntent = new Intent(JobSyncAdapter.ACTION_DATA_UPDATED)
+                .setPackage(context.getPackageName());
+        context.sendBroadcast(dataUpdatedIntent);
+    }
+
 }
+
+

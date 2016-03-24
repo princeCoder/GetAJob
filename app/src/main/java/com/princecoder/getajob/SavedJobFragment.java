@@ -21,7 +21,7 @@ import android.view.ViewGroup;
 import com.princecoder.getajob.adapter.SavedJobRecyclerViewAdapter;
 import com.princecoder.getajob.data.JobContract;
 import com.princecoder.getajob.model.Job;
-import com.princecoder.getajob.sync.JobService;
+import com.princecoder.getajob.service.JobService;
 
 
 /**

@@ -60,7 +60,6 @@ public class SavedJobRecyclerViewAdapter extends RecyclerView.Adapter<SavedJobRe
 
     @Override
     public int getItemCount() {
-//        return 0;
         if ( null == mCursor ) return 0;
         int count=mCursor.getCount();
         return count;

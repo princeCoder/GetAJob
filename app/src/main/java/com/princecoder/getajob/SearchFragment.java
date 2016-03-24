@@ -33,7 +33,7 @@ import com.princecoder.getajob.data.JobContract;
 import com.princecoder.getajob.model.Job;
 import com.princecoder.getajob.model.JobModel;
 import com.princecoder.getajob.model.RecentSearch;
-import com.princecoder.getajob.sync.JobService;
+import com.princecoder.getajob.service.JobService;
 
 import java.util.ArrayList;
 import java.util.Collections;

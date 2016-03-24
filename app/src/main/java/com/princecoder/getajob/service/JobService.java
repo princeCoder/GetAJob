@@ -1,4 +1,4 @@
-package com.princecoder.getajob.sync;
+package com.princecoder.getajob.service;
 
 import android.app.IntentService;
 import android.content.ContentValues;

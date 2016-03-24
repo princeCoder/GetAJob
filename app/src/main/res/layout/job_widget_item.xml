@@ -1,0 +1,119 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:elevation="@dimen/card_elevation"
+                android:id="@+id/main_container"
+                android:background="@drawable/touch_selector"
+                android:layout_marginTop="1dp"
+                android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/horizontal_margin"
+        android:layout_marginBottom="@dimen/horizontal_margin">
+
+        <!--suppress AndroidLintContentDescription -->
+        <ImageView
+            android:id="@+id/company_logo"
+            android:layout_width="@dimen/icon_dimens"
+            android:layout_gravity="center_vertical"
+            android:layout_height="@dimen/icon_dimens"
+            android:layout_marginStart="@dimen/vertical_margin"
+            android:layout_marginLeft="@dimen/vertical_margin"/>
+
+        <LinearLayout android:layout_width="0dp"
+                      android:layout_weight="4"
+
+                      android:layout_height="wrap_content"
+                      android:layout_gravity="center_vertical"
+                      android:layout_marginLeft="@dimen/vertical_margin"
+                      android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/job_title"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="Job title"
+                android:textColor="@color/primary_text"
+                style="?android:attr/textAppearanceSmall"
+                android:paddingRight="@dimen/vertical_margin"
+                android:paddingEnd="@dimen/vertical_margin"
+                android:fontFamily="sans-serif-condensed"
+                android:ellipsize="end"
+                android:maxLines="1" />
+
+            <TextView
+                android:id="@+id/company"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:paddingRight="@dimen/vertical_margin"
+                android:paddingEnd="@dimen/vertical_margin"
+                android:text="company"
+                android:textColor="@color/secondary_text"
+                style="?android:attr/textAppearanceSmall"
+                android:fontFamily="sans-serif-condensed"
+                android:singleLine="true"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/job_location"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:paddingRight="@dimen/vertical_margin"
+                android:paddingEnd="@dimen/vertical_margin"
+                android:text="location"
+                android:textColor="@color/secondary_text"
+                style="?android:attr/textAppearanceSmall"
+                android:fontFamily="sans-serif-condensed"
+                android:singleLine="true"
+                android:ellipsize="end" />
+            <RelativeLayout android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1">
+                <TextView
+                    android:id="@+id/date_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:maxLines="1"
+                    android:gravity="center_vertical"
+                    android:text="Posted:"
+                    android:layout_centerVertical="true"
+                    android:paddingRight="@dimen/vertical_margin"
+                    android:paddingEnd="@dimen/vertical_margin"
+                    android:textColor="@color/primary_text"
+                    style="?android:attr/textAppearanceSmall"
+                    android:fontFamily="sans-serif-condensed"
+                    android:singleLine="true"
+                    android:ellipsize="end" />
+                <TextView
+                    android:id="@+id/job_posted_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_toRightOf="@+id/date_lbl"
+                    android:maxLines="1"
+                    android:gravity="center_vertical"
+                    android:text=" April 12"
+                    android:layout_centerVertical="true"
+                    android:paddingRight="@dimen/vertical_margin"
+                    android:paddingEnd="@dimen/vertical_margin"
+                    android:textColor="@color/colorAccent"
+                    style="?android:attr/textAppearanceSmall"
+                    android:fontFamily="sans-serif-condensed"
+                    android:singleLine="true"
+                    android:ellipsize="end" />
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

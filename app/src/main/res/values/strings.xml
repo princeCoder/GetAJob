@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">GetAJob</string>
+
+    <!-- Sync Adapter info-->
     <string name="content_authority">com.princecoder.getajob</string>
+    <string name="sync_account_type">com.princecoder.getajob</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -29,4 +32,6 @@
     <string name="title_activity_job_detail">JobDetailActivity</string>
     <string name="job_selected_listener_error">Must Implement OnJobSelectedListener</string>
     <string name="detail_menu">Details</string>
+    <string name="widget_empty_view">No data to display</string>
+
 </resources>
