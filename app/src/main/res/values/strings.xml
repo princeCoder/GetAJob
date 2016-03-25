@@ -33,5 +33,6 @@
     <string name="job_selected_listener_error">Must Implement OnJobSelectedListener</string>
     <string name="detail_menu">Details</string>
     <string name="widget_empty_view">No data to display</string>
+    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
 
 </resources>

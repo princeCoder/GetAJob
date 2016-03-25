@@ -28,6 +28,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.princecoder.getajob.adapter.RecentRecyclerViewAdapter;
 import com.princecoder.getajob.data.JobContract;
 import com.princecoder.getajob.model.Job;
@@ -60,7 +62,6 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
 
     // Log field
     private final String TAG=getClass().getSimpleName();
-
 
     //Listener
     OnSearchSelectedListener mListener;
@@ -98,6 +99,11 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView=inflater.inflate(R.layout.fragment_search, container, false);
+
+        AdView mAdView = (AdView) rootView.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
         mTitleEdt= (EditText) rootView.findViewById(R.id.title_edt);
         mTitleEdt.setFocusable(true);
 
@@ -176,6 +182,7 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
 
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true);
+
         return rootView;
     }
 
@@ -377,5 +384,13 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
             }
         }
     };
+
+    public abstract class AdListener extends com.google.android.gms.ads.AdListener{
+        public abstract void onAdLoaded();
+        public abstract void onAdFailedToLoad(int errorCode);
+        public abstract void onAdOpened();
+        public abstract void onAdClosed();
+        public abstract void onAdLeftApplication();
+    }
 
 }

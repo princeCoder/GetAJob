@@ -20,6 +20,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.princecoder.getajob.model.Job;
 import com.princecoder.getajob.model.RecentSearch;
 import com.princecoder.getajob.service.JobService;
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout mDrawerLayout;
     //To get the default view index to show
     private int defaultViewIndex = 0;
+    private Tracker mTracker;
 
     /**
      * Remember the position of the selected item.
@@ -72,6 +75,11 @@ public class MainActivity extends AppCompatActivity
             //Set the view to display by default
             selectItem(defaultViewIndex);
         }
+        // Obtain the shared Tracker instance.
+        JobApplication application = (JobApplication) getApplication();
+        mTracker = application.getDefaultTracker();
+
+
         JobSyncAdapter.initializeSyncAdapter(this);
 
     }
@@ -133,10 +141,12 @@ public class MainActivity extends AppCompatActivity
         // update the main content by replacing fragments
         Fragment fragment ;
         if(position==0){
+
             fragment= new SearchFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
 
         }else if(position==1){
+
             fragment = new SavedJobFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
         }
@@ -229,6 +239,12 @@ public class MainActivity extends AppCompatActivity
         context.sendBroadcast(dataUpdatedIntent);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mTracker.setScreenName("Main Screen");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+    }
 }
 
 
