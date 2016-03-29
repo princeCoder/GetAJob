@@ -18,7 +18,7 @@ import com.princecoder.getajob.data.JobContract;
 import com.princecoder.getajob.model.Job;
 import com.princecoder.getajob.utils.Utility;
 
-/**
+/** recyclerView for Saved Job
  * Created by Prinzly Ngotoum on 3/13/16.
  */
 public class SavedJobRecyclerViewAdapter extends RecyclerView.Adapter<SavedJobRecyclerViewAdapter.ViewHolder> {

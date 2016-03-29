@@ -3,7 +3,7 @@ package com.princecoder.getajob.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
+/** Job POJO
  * Created by Prinzly Ngotoum on 3/13/16.
  */
 public class Job implements Parcelable{

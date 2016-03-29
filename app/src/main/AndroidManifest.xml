@@ -3,8 +3,6 @@
           xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-
-
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <!-- Permission required to get location -->
@@ -29,14 +27,14 @@
     <uses-permission android:name="com.example.android.sunshine.app.permission.C2D_MESSAGE"/>
 
     <application
+        android:name=".JobApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:name=".JobApplication"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar"
@@ -59,66 +57,68 @@
             android:syncable="true"/>
 
         <activity
-            android:name=".ListJobActivity"
+            android:name=".ui.ListJobActivity"
             android:label="@string/title_activity_list_jobs"
-            android:parentActivityName=".MainActivity"
             android:launchMode="singleTop"
+            android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.princecoder.getajob.MainActivity"/>
+                android:value=".ui.MainActivity"/>
         </activity>
         <activity
-            android:name=".JobDetailActivity"
+            android:name=".ui.JobDetailActivity"
             android:label="@string/title_activity_job_detail"
-            android:parentActivityName=".ListJobActivity"
+            android:parentActivityName=".ui.ListJobActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
-        <!-- Sync Adapter Authenticaticator Service-->
-        <service
-            android:name=".sync.JobAuthenticatorService"
-            >
+        <!-- Sync Adapter Authenticaticator Service -->
+        <service android:name=".sync.JobAuthenticatorService">
             <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
+                <action android:name="android.accounts.AccountAuthenticator"/>
             </intent-filter>
+
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
+                android:resource="@xml/authenticator"/>
         </service>
-
 
         <!-- The SyncAdapter service -->
         <service
             android:name=".sync.JobSyncService"
-            android:exported="true"
-            >
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.content.SyncAdapter" />
+                <action android:name="android.content.SyncAdapter"/>
             </intent-filter>
+
             <meta-data
                 android:name="android.content.SyncAdapter"
-                android:resource="@xml/syncadapter" />
+                android:resource="@xml/syncadapter"/>
         </service>
 
-
-        <!--Widget Receiver -->
-        <receiver android:name=".widget.WidgetProvider" >
+        <!-- Widget Receiver -->
+        <receiver android:name=".widget.WidgetProvider">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="com.princecoder.sync.action.ACTION_DATA_UPDATED" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="com.princecoder.sync.action.ACTION_DATA_UPDATED"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_provider" />
+                android:resource="@xml/widget_provider"/>
         </receiver>
 
         <!-- Widget service -->
         <service
             android:name=".widget.WidgetService"
-            android:permission="android.permission.BIND_REMOTEVIEWS" />
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
 
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:parentActivityName=".ui.MainActivity"
+            android:label="@string/title_activity_settings">
+        </activity>
     </application>
 
 </manifest>

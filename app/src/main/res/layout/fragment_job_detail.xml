@@ -4,7 +4,7 @@
                 android:layout_height="match_parent"
                 android:paddingTop="@dimen/horizontal_margin"
                 android:paddingBottom="@dimen/horizontal_margin"
-                tools:context="com.princecoder.getajob.JobDetailActivityFragment"
+                tools:context=".ui.JobDetailActivityFragment"
                 tools:showIn="@layout/activity_job_detail">
     <ScrollView android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -28,7 +28,7 @@
                     android:layout_marginBottom="@dimen/horizontal_margin">
 
                     <!--suppress AndroidLintContentDescription -->
-                    <com.princecoder.getajob.AspectRatioImageView
+                    <com.princecoder.getajob.ui.AspectRatioImageView
                         android:id="@+id/company_logo"
                         android:layout_width="@dimen/icon_dimens"
                         android:layout_gravity="center_vertical"

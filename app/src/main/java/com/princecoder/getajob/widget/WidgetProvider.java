@@ -12,7 +12,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.widget.RemoteViews;
 
-import com.princecoder.getajob.MainActivity;
+import com.princecoder.getajob.ui.MainActivity;
 import com.princecoder.getajob.R;
 
 /**

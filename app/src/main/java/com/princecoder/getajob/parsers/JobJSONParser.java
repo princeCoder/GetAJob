@@ -1,8 +1,10 @@
 package com.princecoder.getajob.parsers;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.princecoder.getajob.model.Job;
+import com.princecoder.getajob.ui.JobsFragment;
 import com.princecoder.getajob.utils.L;
 import com.princecoder.getajob.utils.Utility;
 
@@ -21,7 +23,7 @@ public class JobJSONParser {
     //log Tag
     private final static String LOG_TAG = JobJSONParser.class.getSimpleName();
 
-    public static List<Job> parseFeed(Context context, String content) {
+    public static synchronized List<Job> parseFeed(Context context, String content) {
 
         // Job information
         final String JOB_POST_ID = "id";
@@ -60,9 +62,20 @@ public class JobJSONParser {
         String companyLogo="";
         String tagLine="";
         String type="";
+        final String PAGES = "pages";
 
         try{
             JSONObject jobsJson = new JSONObject(content).getJSONObject("listings");
+            if(jobsJson.has(PAGES)){
+                int pages= jobsJson.getInt(PAGES);
+                // We brodcast the response to the fragment
+                Intent intent = new Intent(JobsFragment.PAGE);
+                intent.putExtra("page",pages);
+                if(context!=null)
+                    context.sendBroadcast(intent);
+
+            }
+
             JSONArray jobsArray = jobsJson.getJSONArray("listing");
 
             ArrayList<Job> jobArrayList = new ArrayList<Job>(jobsArray.length());
@@ -92,6 +105,7 @@ public class JobJSONParser {
                         JSONObject locationObject=company.getJSONObject(LOCATION);
                         String lat=locationObject.getString(LAT);
                         String lgn=locationObject.getString(LON);
+                        if(context!=null)//The  context may change
                         location=Utility.getLocationFromLonLat(context,Double.parseDouble(lgn),Double.parseDouble(lat));
                     }
                     if(company.has(JOB_COMPANY_NAME)){

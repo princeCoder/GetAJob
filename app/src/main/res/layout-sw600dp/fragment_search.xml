@@ -2,16 +2,14 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
-              tools:context="com.princecoder.getajob.SearchFragment">
+              tools:context=".ui.SearchFragment">
 
 
     <LinearLayout android:layout_width="580dp"
                   android:layout_gravity="center_horizontal"
                   android:layout_height="wrap_content"
                   android:orientation="vertical">
-
         <RelativeLayout
             android:id="@+id/rel_title"
             android:layout_marginTop="@dimen/activity_horizontal_margin"

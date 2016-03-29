@@ -13,7 +13,7 @@ import com.princecoder.getajob.R;
 import com.princecoder.getajob.data.JobContract;
 import com.princecoder.getajob.model.RecentSearch;
 
-/**
+/** RecyclerView Adapter for recent searches
  * Created by Prinzly Ngotoum on 3/17/16.
  */
 public class RecentRecyclerViewAdapter extends RecyclerView.Adapter<RecentRecyclerViewAdapter.ViewHolder> {

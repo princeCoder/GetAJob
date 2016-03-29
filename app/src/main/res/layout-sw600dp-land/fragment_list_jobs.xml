@@ -11,16 +11,6 @@
                   android:layout_weight="2"
                   android:layout_height="fill_parent"
                   android:orientation="vertical">
-
-        <!--<android.support.design.widget.TabLayout-->
-        <!--android:id="@+id/sliding_tabs"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--style="@style/MyCustomTabLayout"-->
-        <!--app:tabMaxWidth="0dp"-->
-        <!--app:tabGravity="fill"-->
-        <!--app:tabMode="fixed" />-->
-
         <!-- ViewPager for Recent and Saved-->
 
         <android.support.v4.view.ViewPager
@@ -29,22 +19,16 @@
             android:layout_height="0px"
             android:layout_weight="1"
             android:background="@android:color/white" />
-        <RelativeLayout
-            android:id="@+id/viewPagerIndicator"
+        <LinearLayout
+            android:id="@+id/viewPagerCountDots"
             android:layout_width="match_parent"
             android:layout_height="55dp"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
+            android:background="@color/white"
             android:layout_marginTop="5dp"
-            android:gravity="center">
-
-            <LinearLayout
-                android:id="@+id/viewPagerCountDots"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
-                android:gravity="center"
-                android:orientation="horizontal" />
-        </RelativeLayout>
+            android:orientation="horizontal" />
     </LinearLayout>
     <!--Divider-->
     <View

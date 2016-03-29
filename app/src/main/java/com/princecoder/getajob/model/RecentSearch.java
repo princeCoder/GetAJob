@@ -3,7 +3,7 @@ package com.princecoder.getajob.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
+/** Recent Search POJO
  * Created by Prinzly Ngotoum on 3/17/16.
  */
 public class RecentSearch implements Parcelable{

@@ -18,7 +18,7 @@ import com.princecoder.getajob.utils.Utility;
 
 import java.util.ArrayList;
 
-/**
+/** recyclerView for found jobs
  * Created by Prinzly Ngotoum on 3/13/16.
  */
 public class SearchJobRecyclerViewAdapter extends RecyclerView.Adapter<SearchJobRecyclerViewAdapter.ViewHolder>{
