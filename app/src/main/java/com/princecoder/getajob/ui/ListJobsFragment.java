@@ -18,6 +18,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.princecoder.getajob.R;
+import com.princecoder.getajob.model.Job;
+import com.princecoder.getajob.model.RecentSearch;
+import com.princecoder.getajob.service.JobService;
 
 import java.util.ArrayList;
 
@@ -29,6 +32,10 @@ public class ListJobsFragment extends Fragment{
 
     //Number of page
     private static  int NUM_PAGE;
+
+    private boolean isNumPageUpdated=false;
+
+    private Job jobParam;
 
     //ViewPager
     private ViewPager mViewPager;
@@ -100,6 +107,7 @@ public class ListJobsFragment extends Fragment{
         if (savedInstanceState != null) {
             mSelectedItemId=savedInstanceState.getInt("defaultpage",1);
             NUM_PAGE=savedInstanceState.getInt("numPages",1);
+            isNumPageUpdated=savedInstanceState.getBoolean("isNumPageUpdated");
 
             if(NUM_PAGE>1){
                             //We only show indicator if we have at least 2 pages
@@ -117,6 +125,7 @@ public class ListJobsFragment extends Fragment{
             NUM_PAGE=1;
             mAdapter.notifyDataSetChanged();
         }
+        jobParam=getActivity().getIntent().getParcelableExtra(JobsFragment.JOB_TAG);
         return rootView;
     }
 
@@ -147,8 +156,9 @@ public class ListJobsFragment extends Fragment{
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("defaultpage",mSelectedItemId);
-        outState.putInt("numPages",NUM_PAGE);
+        outState.putInt("defaultpage", mSelectedItemId);
+        outState.putInt("numPages", NUM_PAGE);
+        outState.putBoolean("isNumPageUpdated",isNumPageUpdated);
     }
 
 
@@ -173,26 +183,43 @@ public class ListJobsFragment extends Fragment{
         @Override
         public void onReceive(Context context, Intent intent) {
             int n=intent.getIntExtra("page",1);
-            NUM_PAGE=n;
-            dotsCount=n;
-            if(NUM_PAGE>1){
-                //We only show indicator if we have at least 2 pages
-                pager_indicator.setVisibility(View.VISIBLE);
-                //We only show indicator if we have at least 2 pages
-                pager_indicator.removeAllViews();
-                setUiPageViewController();
-            }
-            else{
-                pager_indicator.setVisibility(View.GONE);
-                if(NUM_PAGE==0){
-                    Snackbar.make(getView(), "No job found ", Snackbar.LENGTH_LONG).show();
+            if(!isNumPageUpdated){ // We only get the number of page to display one time
+                isNumPageUpdated=true;
+                dotsCount=NUM_PAGE=n;
+                if(NUM_PAGE>1){
+                    //We only show indicator if we have at least 2 pages
+                    pager_indicator.setVisibility(View.VISIBLE);
+                    //We only show indicator if we have at least 2 pages
+                    pager_indicator.removeAllViews();
+                    setUiPageViewController();
+
+                    //We save the recent search
+                    saveRecentSearch();
                 }
+                else{
+                    pager_indicator.setVisibility(View.GONE);
+                    if(NUM_PAGE==0){
+                        Snackbar.make(getView(), "No job found ", Snackbar.LENGTH_LONG).show();
+                    }
+                    else{
+                        //We save the recent search
+                        saveRecentSearch();
+                    }
 
+                }
+                mAdapter.notifyDataSetChanged();
             }
-
-            mAdapter.notifyDataSetChanged();
         }
     };
 
 
+    private void saveRecentSearch(){
+        RecentSearch search=new RecentSearch();
+        search.setTitle(jobParam.getTitle());
+        search.setLocation(jobParam.getLocation());
+        Intent searchIntent = new Intent(getActivity(), JobService.class);
+        searchIntent.setAction(JobService.SAVE_RECENT_SEARCH);
+        searchIntent.putExtra(JobService.RECENT_TAG, search);
+        getActivity().startService(searchIntent);
+    }
 }
