@@ -18,6 +18,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import com.princecoder.getajob.JobApplication;
 import com.princecoder.getajob.R;
 import com.princecoder.getajob.adapter.SavedJobRecyclerViewAdapter;
 import com.princecoder.getajob.data.JobContract;
@@ -44,14 +47,10 @@ public class SavedJobFragment extends Fragment implements LoaderManager.LoaderCa
     //Listener
     OnJobSelectedListener mListener;
 
+    private Tracker mTracker;
+
     // Log field
     private final String TAG=getClass().getSimpleName();
-
-    // newInstance constructor for creating fragment with arguments
-    public static SavedJobFragment newInstance() {
-        SavedJobFragment f = new SavedJobFragment();
-        return f;
-    }
 
     // Store instance variables based on arguments passed
     @Override
@@ -60,6 +59,10 @@ public class SavedJobFragment extends Fragment implements LoaderManager.LoaderCa
         //register the receiver
         getActivity().registerReceiver(mDeleteJobReceiver,
                 new IntentFilter(JobService.DELETE_JOB));
+
+        // Obtain the shared Tracker instance.
+        JobApplication application = (JobApplication) getActivity().getApplicationContext();
+        mTracker = application.getDefaultTracker();
 
     }
 
@@ -86,7 +89,7 @@ public class SavedJobFragment extends Fragment implements LoaderManager.LoaderCa
         mAdapter=new SavedJobRecyclerViewAdapter(getActivity(), new SavedJobRecyclerViewAdapter.JobAdapterOnClickHandler() {
             @Override
             public void onClick(Job job, SavedJobRecyclerViewAdapter.ViewHolder vh) {
-                mListener.onJobSelectedListener(job);
+                mListener.onJobSelectedListener(job,vh);
                 mPosition=vh.getAdapterPosition();
             }
 
@@ -121,6 +124,14 @@ public class SavedJobFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //Track the screen
+        mTracker.setScreenName("Saved_Job_Fragment");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override
@@ -170,7 +181,7 @@ public class SavedJobFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     public interface OnJobSelectedListener{
-        void onJobSelectedListener(Job job);
+        void onJobSelectedListener(Job job, SavedJobRecyclerViewAdapter.ViewHolder vh);
         void onDeleteJobListener(Job job);
     }
 

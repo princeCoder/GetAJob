@@ -108,7 +108,7 @@ public class JobsFragment extends Fragment {
             public void onClick(int id, SearchJobRecyclerViewAdapter.ViewHolder vh) {
                 //@Todo display job details
                 Job job=mAdapter.getItem(id);
-                mListener.onJobSelectedListener(job);
+                mListener.onJobSelectedListener(job,vh);
                 mPosition=id;
             }
 
@@ -261,7 +261,7 @@ public class JobsFragment extends Fragment {
     }
 
     public interface OnJobSelectedListener{
-        void onJobSelectedListener(Job job);
+        void onJobSelectedListener(Job job, SearchJobRecyclerViewAdapter.ViewHolder vh);
         void onJobSavedListener(Job job);
     }
 

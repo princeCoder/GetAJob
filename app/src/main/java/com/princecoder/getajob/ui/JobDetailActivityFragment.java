@@ -5,23 +5,31 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.Html;
+import android.transition.Slide;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import com.princecoder.getajob.JobApplication;
 import com.princecoder.getajob.R;
 import com.princecoder.getajob.model.Job;
 import com.princecoder.getajob.service.JobService;
@@ -46,6 +54,8 @@ public class JobDetailActivityFragment extends Fragment {
     private TextView mPostedDate;
     private TextView mKeywords;
 
+    private Tracker mTracker;
+
     //Job Tag
     public static final String CURRENT_JOB="CURRENT_JOB";
 
@@ -69,7 +79,11 @@ public class JobDetailActivityFragment extends Fragment {
 
         getActivity().registerReceiver(mServiceJobExistReceiver,
                 new IntentFilter(JobService.DOES_JOB_EXIST));
-        setHasOptionsMenu(true);;
+        setHasOptionsMenu(true);
+
+        // Obtain the shared Tracker instance.
+        JobApplication application = (JobApplication) getActivity().getApplicationContext();
+        mTracker = application.getDefaultTracker();
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
@@ -94,6 +108,10 @@ public class JobDetailActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView=inflater.inflate(R.layout.fragment_job_detail, container, false);
 
+//        AdView mAdView = (AdView) rootView.findViewById(R.id.adView);
+//        AdRequest adRequest = new AdRequest.Builder().build();
+//        mAdView.loadAd(adRequest);
+
         if(savedInstanceState==null){
             Intent intent=getActivity().getIntent();
             if((intent!=null)&&(intent.hasExtra(CURRENT_JOB))){ //Phones
@@ -114,6 +132,9 @@ public class JobDetailActivityFragment extends Fragment {
         }
 
         mCompanylogo= (ImageView) rootView.findViewById(R.id.company_logo);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mCompanylogo.setTransitionName(getString(R.string.transition_image) + String.valueOf(mCurrentJob.getId()));
+        }
         mJobTitle=(TextView)rootView.findViewById(R.id.job_title);
         mCompanyName=(TextView)rootView.findViewById(R.id.company);
         mLocation=(TextView)rootView.findViewById(R.id.job_location);
@@ -140,13 +161,17 @@ public class JobDetailActivityFragment extends Fragment {
         mKeywords = (TextView) rootView.findViewById(R.id.keyword);
 
         bindData();
-
+        // Apply the content transition
+        bodyTextAnimation();
         return rootView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        //Track the screen
+        mTracker.setScreenName("Detail_Fragment");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     //Save the current job in the database
@@ -179,7 +204,7 @@ public class JobDetailActivityFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(CURRENT_JOB,mCurrentJob);
+        outState.putParcelable(CURRENT_JOB, mCurrentJob);
 
     }
 
@@ -196,8 +221,48 @@ public class JobDetailActivityFragment extends Fragment {
         mRelocationAssiatance.setText(mCurrentJob.getRelocationAssistance()==0?"No":"Yes");
         mPostedDate.setText(Utility.getFormattedMonthDayYear(mCurrentJob.getPostDate()));
         mKeywords.setText(mCurrentJob.getKeywords());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            scheduleStartPostponedTransition(mCompanylogo);
+        }
 
+    }
 
+    /**
+     * Set linear animation for the text
+     * This is a content animation
+     */
+    private void bodyTextAnimation() {
+        Slide slide = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            slide = new Slide(Gravity.BOTTOM);
+            slide.addTarget(R.id.description);
+            slide.excludeTarget(R.id.detail_container, true);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                slide.setInterpolator(AnimationUtils.loadInterpolator(getActivity(), android.R.interpolator.linear));
+            }
+            //Set the duration just right
+            slide.setDuration(300);
+            //Set the enter transition
+            getActivity().getWindow().setEnterTransition(slide);
+        }
+    }
+
+    //Postpone the transition on a sharedElement
+    //In my case it will be the imageView in the collapsedToolbarlayout
+    private void scheduleStartPostponedTransition(final View sharedElement) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            sharedElement.getViewTreeObserver().addOnPreDrawListener(
+                    new ViewTreeObserver.OnPreDrawListener() {
+                        @Override
+                        public boolean onPreDraw() {
+                            sharedElement.getViewTreeObserver().removeOnPreDrawListener(this);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                getActivity().startPostponedEnterTransition();
+                            }
+                            return true;
+                        }
+                    });
+        }
     }
 
     private BroadcastReceiver mServiceSaveJobReceiver = new BroadcastReceiver() {

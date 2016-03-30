@@ -1,17 +1,18 @@
 package com.princecoder.getajob.ui;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.princecoder.getajob.R;
+import com.princecoder.getajob.adapter.SearchJobRecyclerViewAdapter;
 import com.princecoder.getajob.model.Job;
 import com.princecoder.getajob.service.JobService;
-import com.princecoder.getajob.ui.JobDetailActivity;
-import com.princecoder.getajob.ui.JobDetailActivityFragment;
-import com.princecoder.getajob.ui.JobsFragment;
 
 public class ListJobActivity extends AppCompatActivity implements JobsFragment.OnJobSelectedListener {
 
@@ -25,10 +26,21 @@ public class ListJobActivity extends AppCompatActivity implements JobsFragment.O
     }
 
     @Override
-    public void onJobSelectedListener(Job job) { //We display details of this job
+    public void onJobSelectedListener(Job job, SearchJobRecyclerViewAdapter.ViewHolder vh) { //We display details of this job
         if(job!=null){
+
+
+            // shared element transition
+            Bundle args = new Bundle();
+            View sharedView=vh.mLogo;
+            String tName= getString(R.string.transition_image) + String.valueOf(job.getId());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                sharedView.setTransitionName(tName);
+                args = ActivityOptions.makeSceneTransitionAnimation(this, sharedView, tName).toBundle();
+            }
+
             if(getResources().getBoolean(R.bool.muilti_columns)){//This is a Tablet
-                Bundle args = new Bundle();
+//                Bundle args = new Bundle();
                 args.putParcelable(JobDetailActivityFragment.CURRENT_JOB, job);
 
                 JobDetailActivityFragment fragment = new JobDetailActivityFragment();
@@ -38,9 +50,17 @@ public class ListJobActivity extends AppCompatActivity implements JobsFragment.O
 
             }
             else{ //This is a phone
+
                 Intent intent = new Intent(this, JobDetailActivity.class)
                         .putExtra(JobDetailActivityFragment.CURRENT_JOB, job);
-                startActivity(intent);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    startActivity(intent,args);
+                }
+                else{
+                    startActivity(intent);
+                }
+
             }
         }
     }

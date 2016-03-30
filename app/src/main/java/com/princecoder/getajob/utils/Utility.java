@@ -228,4 +228,13 @@ public class Utility {
         return lg;
     }
 
+    // --------------------------------------------------------------------------------
+    //				Google Analytics
+    // --------------------------------------------------------------------------------
+    static public class Analytics {
+        static public final String trackerID ="UA-75589722-1";
+
+    }
+
+
 }

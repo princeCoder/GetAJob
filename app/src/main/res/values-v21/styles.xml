@@ -5,4 +5,10 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
+    <style name="AppTheme" parent="AppTheme.Base">
+        <item name="android:windowContentTransitions">true</item>
+    </style>
+    <style name="AppTheme.Home">
+        <item name="android:windowExitTransition">@transition/grid_exit</item>
+    </style>
 </resources>

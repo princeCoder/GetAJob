@@ -9,6 +9,9 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import com.princecoder.getajob.JobApplication;
 import com.princecoder.getajob.R;
 
 
@@ -17,9 +20,19 @@ import com.princecoder.getajob.R;
  */
 public class AboutFragment extends Fragment {
 
+    private Tracker mTracker;
 
     public AboutFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Obtain the shared Tracker instance.
+        JobApplication application = (JobApplication) getActivity().getApplicationContext();
+        mTracker = application.getDefaultTracker();
     }
 
 
@@ -28,10 +41,6 @@ public class AboutFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView=inflater.inflate(R.layout.fragment_about, container, false);
-//        AdView mAdView = (AdView) rootView.findViewById(R.id.adView);
-//        AdRequest adRequest = new AdRequest.Builder().build();
-//        mAdView.loadAd(adRequest);
-
         return rootView;
 
     }
@@ -39,5 +48,13 @@ public class AboutFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //Track the screen
+        mTracker.setScreenName("About_Fragment");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 }

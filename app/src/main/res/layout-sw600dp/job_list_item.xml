@@ -106,6 +106,7 @@
                     android:ellipsize="end" />
             </RelativeLayout>
         </LinearLayout>
+
         <ImageButton
             android:id="@+id/action_button"
             android:layout_width="0dp"

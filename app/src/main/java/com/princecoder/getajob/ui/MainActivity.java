@@ -1,10 +1,12 @@
 package com.princecoder.getajob.ui;
 
 
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
@@ -19,11 +21,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.princecoder.getajob.JobApplication;
 import com.princecoder.getajob.R;
+import com.princecoder.getajob.adapter.SavedJobRecyclerViewAdapter;
 import com.princecoder.getajob.model.Job;
 import com.princecoder.getajob.model.RecentSearch;
 import com.princecoder.getajob.service.JobService;
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout mDrawerLayout;
     //To get the default view index to show
     private int defaultViewIndex = 0;
-    private Tracker mTracker;
+
 
     /**
      * Remember the position of the selected item.
@@ -77,10 +78,6 @@ public class MainActivity extends AppCompatActivity
             //Set the view to display by default
             selectItem(defaultViewIndex);
         }
-        // Obtain the shared Tracker instance.
-        JobApplication application = (JobApplication) getApplication();
-        mTracker = application.getDefaultTracker();
-
 
         JobSyncAdapter.initializeSyncAdapter(this);
 
@@ -143,49 +140,64 @@ public class MainActivity extends AppCompatActivity
         // update the main content by replacing fragments
         Fragment fragment ;
         if(position==0){
-
+            setTitle(mDrawerTitles[position]);
             fragment= new SearchFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
 
         }else if(position==1){
-
+            setTitle(mDrawerTitles[position]);
             fragment = new SavedJobFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
         }
         else if(position==2){
+            setTitle(mDrawerTitles[position]);
             fragment = new AboutFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
         }
-        else if(position==3){
-            fragment = new FeedbackFragment();
-            getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
-        }
-        else{
+        else if(position==3) {
+            Intent intentf = new Intent(this, FeedbackAtivity.class);
+            startActivity(intentf);
+        }else{
             Intent intent=new Intent(this,SettingsActivity.class);
             startActivity(intent);
         }
-
-        setTitle(mDrawerTitles[position]);
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
     @Override
-    public void onJobSelectedListener(Job job) {
+    public void onJobSelectedListener(Job job, SavedJobRecyclerViewAdapter.ViewHolder vh) {
         if(job!=null){
+
+            // shared element transition
+            Bundle args = new Bundle();
+            View sharedView=vh.mLogo;
+            String tName= getString(R.string.transition_image) + String.valueOf(job.getId());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                sharedView.setTransitionName(tName);
+                args = ActivityOptions.makeSceneTransitionAnimation(this, sharedView, tName).toBundle();
+            }
+
+
             if(getResources().getBoolean(R.bool.muilti_columns)){//This is a Tablet
-                Bundle args = new Bundle();
+//                Bundle args = new Bundle();
                 args.putParcelable(JobDetailActivityFragment.CURRENT_JOB, job);
 
                 JobDetailActivityFragment fragment = new JobDetailActivityFragment();
                 fragment.setArguments(args);
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 fragmentManager.beginTransaction().replace(R.id.left_container, fragment, "Detail_fragment").commit();
-
             }
             else{ //This is a phone
+
                 Intent intent = new Intent(this, JobDetailActivity.class)
                         .putExtra(JobDetailActivityFragment.CURRENT_JOB, job);
-                startActivity(intent);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    startActivity(intent,args);
+                }
+                else{
+                    startActivity(intent);
+                }
             }
         }
     }
@@ -244,8 +256,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        mTracker.setScreenName("Main Screen");
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 }
 

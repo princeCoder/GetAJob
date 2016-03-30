@@ -28,6 +28,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import com.princecoder.getajob.JobApplication;
 import com.princecoder.getajob.R;
 import com.princecoder.getajob.adapter.RecentRecyclerViewAdapter;
 import com.princecoder.getajob.data.JobContract;
@@ -49,7 +52,6 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
     private EditText mTitleEdt;
     private EditText mLocation;
     private Button mSearchBtn;
-    private int mNumPage;
     private Job mJob=new Job();
 
 
@@ -64,6 +66,8 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
 
     //Listener
     OnSearchSelectedListener mListener;
+
+    private Tracker mTracker;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -86,6 +90,10 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
 
         getActivity().registerReceiver(mDeleteRecentReceiver,
                 new IntentFilter(JobService.DELETE_RECENT_SEARCH));
+
+        // Obtain the shared Tracker instance.
+        JobApplication application = (JobApplication) getActivity().getApplicationContext();
+        mTracker = application.getDefaultTracker();
     }
 
     @Override
@@ -190,6 +198,10 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
 
         //Whenever I resume this fragment, I restart the loader
         restartLoader();
+
+        //Track the screen
+        mTracker.setScreenName("Search_Fragment");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
 
