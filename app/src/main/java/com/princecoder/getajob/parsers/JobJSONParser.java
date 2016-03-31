@@ -3,6 +3,7 @@ package com.princecoder.getajob.parsers;
 import android.content.Context;
 import android.content.Intent;
 
+import com.princecoder.getajob.R;
 import com.princecoder.getajob.model.Job;
 import com.princecoder.getajob.ui.JobsFragment;
 import com.princecoder.getajob.utils.L;
@@ -26,43 +27,14 @@ public class JobJSONParser {
     public static synchronized List<Job> parseFeed(Context context, String content) {
 
         // Job information
-        final String JOB_POST_ID = "id";
-        final String JOB_TITLE = "title";
-        final String JOB_DESCRIPTION = "description";
-        final String JOB_PERKS = "perks";
-        final String JOB_POSTDATE = "post_date";
-        final String JOB_RELOCATION_ASSISTANCE = "relocation_assistance";
-        final String JOB_LOCATION = "name";
-        final String JOB_COMPANY_LOGO = "logo";
-        final String JOB_COMPANY_NAME = "name";
-        final String JOB_KEYWORDS = "keywords";
-        final String JOB_URL = "url";
-        final String JOB_APPLY_URL = "apply_url";
-        final String JOB_COMPANY_TAG_LINE = "tagline";
-        final String COMPANY = "company";
-        final String LOCATION = "location";
-        final String LON = "lng";
-        final String LAT = "lat";
-        final String TYPE = "type";
-        final String TYPE_NAME = "name";
+        final String JOB_POST_ID = "id",JOB_TITLE = "title",JOB_DESCRIPTION = "description",JOB_PERKS = "perks", JOB_POSTDATE = "post_date",JOB_RELOCATION_ASSISTANCE = "relocation_assistance",JOB_LOCATION = "name",
+              JOB_COMPANY_LOGO = "logo",JOB_COMPANY_NAME = "name",JOB_KEYWORDS = "keywords",JOB_URL = "url",JOB_APPLY_URL = "apply_url",JOB_COMPANY_TAG_LINE = "tagline",COMPANY = "company",LOCATION = "location",
+              LON = "lng",LAT = "lat",TYPE = "type",TYPE_NAME = "name",PAGES = "pages";
 
-
-        JSONObject jobObject;
-        String postId="";
-        String title="";
-        String description="";
-        String perks="";
-        String location="";
+        String postId="",title="",description="",perks="",location="",keywords="",applyUrl="",url="",companyName="",companyLogo="",tagLine="",type="";
         long postdate=0;
         int relocationAssistance=0;
-        String keywords="";
-        String applyUrl="";
-        String url="";
-        String companyName="";
-        String companyLogo="";
-        String tagLine="";
-        String type="";
-        final String PAGES = "pages";
+        JSONObject jobObject;
 
         try{
             JSONObject jobsJson = new JSONObject(content).getJSONObject("listings");
@@ -70,7 +42,7 @@ public class JobJSONParser {
                 int pages= jobsJson.getInt(PAGES);
                 // We brodcast the response to the fragment
                 Intent intent = new Intent(JobsFragment.PAGE);
-                intent.putExtra("page",pages);
+                intent.putExtra(context.getString(R.string.num_page_tag),pages);
                 if(context!=null)
                     context.sendBroadcast(intent);
 
@@ -95,7 +67,7 @@ public class JobJSONParser {
                 keywords=jobObject.has(JOB_KEYWORDS)?jobObject.getString(JOB_KEYWORDS):"";
                 applyUrl=jobObject.has(JOB_APPLY_URL)?jobObject.getString(JOB_APPLY_URL):"";
                 url=jobObject.has(JOB_URL)?jobObject.getString(JOB_URL):"";
-                type=jobObject.has(TYPE)?jobObject.getJSONObject(TYPE).getString(TYPE_NAME):"Not Specified";
+                type=jobObject.has(TYPE)?jobObject.getJSONObject(TYPE).getString(TYPE_NAME):context.getString(R.string.type_not_specified);
 
                 //Company Object
                 if(jobObject.has(COMPANY)){
@@ -134,27 +106,4 @@ public class JobJSONParser {
         }
 
     }
-
-
-    public static int getPages(Context context, String content) {
-
-        // Job information
-        final String PAGES = "pages";
-        int pages=1;
-
-        try{
-            JSONObject jobsJson = new JSONObject(content).getJSONObject("listings");
-            if(jobsJson.has(PAGES)){
-                pages= jobsJson.getInt(PAGES);
-            }
-
-        }catch (JSONException e) {
-            L.m(LOG_TAG, e.getMessage());
-            e.printStackTrace();
-            return pages;
-        }
-        return pages;
-    }
-
-
 }

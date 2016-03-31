@@ -35,7 +35,7 @@
                 android:layout_marginStart="@dimen/activity_vertical_margin"
                 android:layout_marginRight="@dimen/activity_vertical_margin"
                 android:layout_marginEnd="@dimen/activity_vertical_margin"
-                android:hint="enter your comment here"/>
+                android:hint="@string/comment_hint"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -45,7 +45,7 @@
             android:layout_height="wrap_content">
             <Button
                 android:id="@+id/send_btn"
-                android:text="Send"
+                android:text="@string/send"
                 android:layout_marginRight="@dimen/activity_vertical_margin"
                 android:layout_marginEnd="@dimen/activity_vertical_margin"
                 android:background="@color/colorPrimary"

@@ -41,18 +41,18 @@ public class ListJobActivity extends AppCompatActivity implements JobsFragment.O
 
             if(getResources().getBoolean(R.bool.muilti_columns)){//This is a Tablet
 //                Bundle args = new Bundle();
-                args.putParcelable(JobDetailActivityFragment.CURRENT_JOB, job);
+                args.putParcelable(JobDetailFragment.CURRENT_JOB, job);
 
-                JobDetailActivityFragment fragment = new JobDetailActivityFragment();
+                JobDetailFragment fragment = new JobDetailFragment();
                 fragment.setArguments(args);
                 FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.left_container, fragment, "Detail_fragment").commit();
+                fragmentManager.beginTransaction().replace(R.id.left_container, fragment, JobDetailFragment.DETAIL_TAG).commit();
 
             }
             else{ //This is a phone
 
                 Intent intent = new Intent(this, JobDetailActivity.class)
-                        .putExtra(JobDetailActivityFragment.CURRENT_JOB, job);
+                        .putExtra(JobDetailFragment.CURRENT_JOB, job);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     startActivity(intent,args);

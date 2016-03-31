@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -27,6 +26,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.princecoder.getajob.JobApplication;
@@ -38,7 +39,7 @@ import com.princecoder.getajob.utils.Utility;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class JobDetailActivityFragment extends Fragment {
+public class JobDetailFragment extends Fragment {
 
 
     private ImageView mCompanylogo;
@@ -65,9 +66,14 @@ public class JobDetailActivityFragment extends Fragment {
     //Share action provider
     ShareActionProvider mShareActionProvider;
 
+    //Menu Item
     MenuItem item;
 
-    public JobDetailActivityFragment() {
+    //Class Tag
+    public final String TAG=getClass().getSimpleName();
+    public static final String DETAIL_TAG = "Detail_fragment";
+
+    public JobDetailFragment() {
     }
 
     @Override
@@ -97,7 +103,7 @@ public class JobDetailActivityFragment extends Fragment {
 
     private Intent createShareIntent(String message) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
+        shareIntent.setType(getActivity().getString(R.string.shareIntent_type));
         shareIntent.putExtra(Intent.EXTRA_TEXT,
                 message);
         return shareIntent;
@@ -108,9 +114,10 @@ public class JobDetailActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView=inflater.inflate(R.layout.fragment_job_detail, container, false);
 
-//        AdView mAdView = (AdView) rootView.findViewById(R.id.adView);
-//        AdRequest adRequest = new AdRequest.Builder().build();
-//        mAdView.loadAd(adRequest);
+        //Create the ad
+        AdView mAdView = (AdView) rootView.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
 
         if(savedInstanceState==null){
             Intent intent=getActivity().getIntent();
@@ -149,8 +156,8 @@ public class JobDetailActivityFragment extends Fragment {
         mApplyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(mCurrentJob.getApplyUrl()));
+                Intent i = new Intent(getActivity(),ApplyActivity.class);
+                i.putExtra(ApplyActivity.URL,mCurrentJob.getApplyUrl());
                 startActivity(i);
             }
         });
@@ -170,7 +177,7 @@ public class JobDetailActivityFragment extends Fragment {
     public void onResume() {
         super.onResume();
         //Track the screen
-        mTracker.setScreenName("Detail_Fragment");
+        mTracker.setScreenName(TAG);
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 

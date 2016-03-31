@@ -5,11 +5,10 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 
+import com.princecoder.getajob.R;
 import com.princecoder.getajob.data.JobContract;
 import com.princecoder.getajob.model.Job;
 import com.princecoder.getajob.model.RecentSearch;
-
-import java.util.ArrayList;
 
 /**
  * Created by Prinzly Ngotoum on 3/13/16.
@@ -49,41 +48,41 @@ public class JobService extends IntentService{
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Intent intents=null;
         if (intent != null) {
             //Job received from the intent
             Job job=intent.getParcelableExtra(JOB_TAG);
 
             //Action
             final String action = intent.getAction();
-            if (DOES_JOB_EXIST.equals(action)) {
-                Intent intent1 = new Intent(DOES_JOB_EXIST);
-                intent1.putExtra(DOES_JOB_EXIST,isJobFound(job.getId()));
-                getApplicationContext().sendBroadcast(intent1);
+            if (DOES_JOB_EXIST.equals(action)) { //Check if the job exist
 
-            } else if (DELETE_JOB.equals(action)) {
+                intents = new Intent(DOES_JOB_EXIST);
+                intents.putExtra(DOES_JOB_EXIST,isJobFound(job.getId()));
+                getApplicationContext().sendBroadcast(intents);
 
-                //We delete the job
+            } else if (DELETE_JOB.equals(action)) {//We delete the job
+
                 deleteJob(job);
             } else if (SAVE_JOB.equals(action)){
-                String message;
-                if(!isJobFound(job.getId())){
-                    //We save the Job
+                if(!isJobFound(job.getId())){//We save the Job
+
                     saveJob(job);
                 }
-                else{
-                    // We brodcast the response to the fragment
-                    Intent saveIntent = new Intent(SAVE_JOB);
-                    saveIntent.putExtra(MESSAGE,"Job already saved");
-                    getApplicationContext().sendBroadcast(saveIntent);
+                else{ // We brodcast the response to the fragment
+
+                    intents = new Intent(SAVE_JOB);
+                    intents.putExtra(MESSAGE,getString(R.string.job_exist_message));
+                    getApplicationContext().sendBroadcast(intents);
                 }
-            } else if (DELETE_RECENT_SEARCH.equals(action)) {
-                //We delete the recent search
-                RecentSearch search=intent.getParcelableExtra(RECENT_TAG);
-                deleteRecentSearch(search);
-            } else if (SAVE_RECENT_SEARCH.equals(action)){
+            } else if (DELETE_RECENT_SEARCH.equals(action)) { //We delete the recent search
 
                 RecentSearch search=intent.getParcelableExtra(RECENT_TAG);
-                //We save recent search
+                deleteRecentSearch(search);
+
+            } else if (SAVE_RECENT_SEARCH.equals(action)){ //We save recent search
+
+                RecentSearch search=intent.getParcelableExtra(RECENT_TAG);
                 saveRecentSearch(search);
             }
         }
@@ -191,15 +190,5 @@ public class JobService extends IntentService{
             Intent intent = new Intent(DELETE_JOB);
             getApplicationContext().sendBroadcast(intent);
         }
-    }
-
-    public void broadcastJobsPerPage(ArrayList<Job> list, int pageNum){
-        // We brodcast the response to the fragment
-        Intent intent = new Intent(SERVICE_JOBS);
-        intent.putParcelableArrayListExtra(JOB_LIST_TAG,list);
-        // This is to make the diference on intents.
-        // In this case, No matter how many broadcast I'm using, I will always have different intents.
-        intent.putExtra(PAGE_TAG,pageNum);
-        getApplicationContext().sendBroadcast(intent);
     }
 }

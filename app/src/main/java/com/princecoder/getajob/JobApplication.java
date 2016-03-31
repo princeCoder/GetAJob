@@ -29,7 +29,7 @@ public class JobApplication extends Application {
     synchronized public Tracker getDefaultTracker() {
         if (mTracker == null) {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(getApplicationContext());
-            mTracker =analytics.newTracker("UA-75589722-1");
+            mTracker =analytics.newTracker(getString(R.string.analytic_key));
         }
         return mTracker;
     }

@@ -34,8 +34,6 @@ public class JobSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         //I just update my widget with saved jobs
-
-        //I retreive the last search preference
         updateWidgets();
         return;
     }

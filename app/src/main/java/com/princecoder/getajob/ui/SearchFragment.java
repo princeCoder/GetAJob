@@ -128,7 +128,8 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
                 String location=mLocation.getText().toString().trim();
                 if(title.isEmpty()&&location.isEmpty()){
                     //We display a snackBar
-                    Snackbar.make(getView(), "You need to enter a criteria", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(getView(), getActivity().getString(R.string.criteria_alert) +
+                            "", Snackbar.LENGTH_LONG).show();
                 }else{
 
                     mJob.setTitle(title);
@@ -162,7 +163,7 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
             @Override
             public void onDeleteRecentSearch(final RecentSearch search, RecentRecyclerViewAdapter.ViewHolder vh) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Do you realy want to remove it from your recent log?");
+                builder.setTitle(getActivity().getString(R.string.delete_search_message));
                 builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
@@ -200,7 +201,7 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
         restartLoader();
 
         //Track the screen
-        mTracker.setScreenName("Search_Fragment");
+        mTracker.setScreenName(TAG);
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
@@ -265,7 +266,7 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
         final ListView listView = (ListView) dialog.findViewById(R.id.list);
         final SearchView  searchText = (SearchView) dialog.findViewById(R.id.searchText);
         searchText.setIconifiedByDefault(false);
-        searchText.setQueryHint("Enter the name of the city to sort");
+        searchText.setQueryHint(getActivity().getString(R.string.search_text_hint));
 
         Iterator iterator=Utility.myLocations.keySet().iterator();
         final ArrayList<String> list=new ArrayList<>(Utility.myLocations.values().size());

@@ -46,6 +46,10 @@ public class ListJobsFragment extends Fragment{
 
     //Selected Page
     private int mSelectedItemId=1;
+    //TAG
+    public  String DEFAULT_PAGE="defaultpage";
+    public  String NUMPAGES="numPages";
+    public  String ISNUMPAGEUPDATED="isNumPageUpdated";
 
 
     public ListJobsFragment() {
@@ -105,9 +109,9 @@ public class ListJobsFragment extends Fragment{
         });
 
         if (savedInstanceState != null) {
-            mSelectedItemId=savedInstanceState.getInt("defaultpage",1);
-            NUM_PAGE=savedInstanceState.getInt("numPages",1);
-            isNumPageUpdated=savedInstanceState.getBoolean("isNumPageUpdated");
+            mSelectedItemId=savedInstanceState.getInt(DEFAULT_PAGE,1);
+            NUM_PAGE=savedInstanceState.getInt(NUMPAGES,1);
+            isNumPageUpdated=savedInstanceState.getBoolean(ISNUMPAGEUPDATED);
 
             if(NUM_PAGE>1){
                             //We only show indicator if we have at least 2 pages
@@ -117,7 +121,7 @@ public class ListJobsFragment extends Fragment{
             else{
                 pager_indicator.setVisibility(View.GONE);
                 if(NUM_PAGE==0)
-                    Snackbar.make(getView(), "No job found ", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(getView(), R.string.no_job_found_message, Snackbar.LENGTH_LONG).show();
             }
 
         }
@@ -156,9 +160,9 @@ public class ListJobsFragment extends Fragment{
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("defaultpage", mSelectedItemId);
-        outState.putInt("numPages", NUM_PAGE);
-        outState.putBoolean("isNumPageUpdated",isNumPageUpdated);
+        outState.putInt(DEFAULT_PAGE, mSelectedItemId);
+        outState.putInt(NUMPAGES, NUM_PAGE);
+        outState.putBoolean(ISNUMPAGEUPDATED,isNumPageUpdated);
     }
 
 
@@ -182,7 +186,7 @@ public class ListJobsFragment extends Fragment{
     private BroadcastReceiver mPageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int n=intent.getIntExtra("page",1);
+            int n=intent.getIntExtra(context.getString(R.string.num_page_tag),1);
             if(!isNumPageUpdated){ // We only get the number of page to display one time
                 isNumPageUpdated=true;
                 dotsCount=NUM_PAGE=n;
@@ -199,7 +203,7 @@ public class ListJobsFragment extends Fragment{
                 else{
                     pager_indicator.setVisibility(View.GONE);
                     if(NUM_PAGE==0){
-                        Snackbar.make(getView(), "No job found ", Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(getView(), R.string.no_job_found_message, Snackbar.LENGTH_LONG).show();
                     }
                     else{
                         //We save the recent search

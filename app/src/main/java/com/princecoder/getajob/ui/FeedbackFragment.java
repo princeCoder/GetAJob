@@ -24,6 +24,7 @@ public class FeedbackFragment extends Fragment {
     private Button mSendButton;
     private EditText mComment;
     private Tracker mTracker;
+    private final String TAG=getClass().getSimpleName();
     
     public FeedbackFragment() {
         // Required empty public constructor
@@ -59,8 +60,8 @@ public class FeedbackFragment extends Fragment {
     }
 
     private void sendEmailIntent(String comment){
-        String to = "ngassaprinzly@gmail.com";
-        String subject = "GetAJob Feedback";
+        String to = getActivity().getString(R.string.default_email);
+        String subject = getActivity().getString(R.string.email_subject);
         String message = comment;
 
         Intent email = new Intent(Intent.ACTION_SEND);
@@ -69,16 +70,16 @@ public class FeedbackFragment extends Fragment {
         email.putExtra(Intent.EXTRA_TEXT, message);
 
         // need this to prompts email client only
-        email.setType("message/rfc822");
+        email.setType(getActivity().getString(R.string.email_message_type));
 
-        startActivity(Intent.createChooser(email, "Choose an Email client"));
+        startActivity(Intent.createChooser(email, getActivity().getString(R.string.chooser_message)));
     }
 
     @Override
     public void onResume() {
         super.onResume();
         //Track the screen
-        mTracker.setScreenName("Feedback_Fragment");
+        mTracker.setScreenName(TAG);
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 }

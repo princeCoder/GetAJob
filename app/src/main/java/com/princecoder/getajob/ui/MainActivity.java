@@ -2,7 +2,6 @@ package com.princecoder.getajob.ui;
 
 
 import android.app.ActivityOptions;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -46,11 +45,6 @@ public class MainActivity extends AppCompatActivity
      */
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
 
-    /**
-     * Per the design guidelines, you should show the drawer on launch until the user manually
-     * expands it. This shared preference tracks this.
-     */
-    private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +68,7 @@ public class MainActivity extends AppCompatActivity
 
         }else{
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            defaultViewIndex = Integer.parseInt(prefs.getString("pref_startFragment","0"));
+            defaultViewIndex = Integer.parseInt(prefs.getString(getString(R.string.pref_start),"0"));
             //Set the view to display by default
             selectItem(defaultViewIndex);
         }
@@ -179,18 +173,17 @@ public class MainActivity extends AppCompatActivity
 
 
             if(getResources().getBoolean(R.bool.muilti_columns)){//This is a Tablet
-//                Bundle args = new Bundle();
-                args.putParcelable(JobDetailActivityFragment.CURRENT_JOB, job);
+                args.putParcelable(JobDetailFragment.CURRENT_JOB, job);
 
-                JobDetailActivityFragment fragment = new JobDetailActivityFragment();
+                JobDetailFragment fragment = new JobDetailFragment();
                 fragment.setArguments(args);
                 FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.left_container, fragment, "Detail_fragment").commit();
+                fragmentManager.beginTransaction().replace(R.id.left_container, fragment, JobDetailFragment.DETAIL_TAG).commit();
             }
             else{ //This is a phone
 
                 Intent intent = new Intent(this, JobDetailActivity.class)
-                        .putExtra(JobDetailActivityFragment.CURRENT_JOB, job);
+                        .putExtra(JobDetailFragment.CURRENT_JOB, job);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     startActivity(intent,args);
@@ -205,7 +198,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onDeleteJobListener(Job job) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Do you realy want to remove it from your saved jobs?");
+        builder.setTitle(getString(R.string.delete_save_job_message));
         final Job j=job;
         final Intent intent = new Intent(this, JobService.class);
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -215,10 +208,10 @@ public class MainActivity extends AppCompatActivity
                 intent.putExtra(JobsFragment.JOB_TAG, j);
                 startService(intent);
 
-                if(getResources().getBoolean(R.bool.muilti_columns)){
-                    JobDetailActivityFragment fragment = (JobDetailActivityFragment)getSupportFragmentManager().findFragmentByTag("Detail_fragment");
-                    if(fragment!=null)
-                    getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                if (getResources().getBoolean(R.bool.muilti_columns)) {
+                    JobDetailFragment fragment = (JobDetailFragment) getSupportFragmentManager().findFragmentByTag(JobDetailFragment.DETAIL_TAG);
+                    if (fragment != null)
+                        getSupportFragmentManager().beginTransaction().remove(fragment).commit();
                 }
                 dialog.dismiss();
             }
@@ -243,14 +236,6 @@ public class MainActivity extends AppCompatActivity
         job.setLocation(search.getLocation());
         intent.putExtra(JobsFragment.JOB_TAG, job);
         startService(intent);
-    }
-
-    public void updateWidgets() {
-        Context context = getApplicationContext();
-        // Setting the package ensures that only components in our app will receive the broadcast
-        Intent dataUpdatedIntent = new Intent(JobSyncAdapter.ACTION_DATA_UPDATED)
-                .setPackage(context.getPackageName());
-        context.sendBroadcast(dataUpdatedIntent);
     }
 
     @Override

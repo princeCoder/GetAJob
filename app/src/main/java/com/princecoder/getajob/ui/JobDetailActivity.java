@@ -23,7 +23,7 @@ public class JobDetailActivity extends AppCompatActivity{
 
             //We create the Top Track fragment and add it to the activity
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, new JobDetailActivityFragment())
+                    .add(R.id.fragment_container, new JobDetailFragment())
                     .commit();
         }
 
@@ -33,7 +33,7 @@ public class JobDetailActivity extends AppCompatActivity{
         }
     }
 
-//    @Override
+    @Override
     public void onActivityReenter(int resultCode, Intent data) {
         super.onActivityReenter(resultCode, data);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -49,11 +49,11 @@ public class JobDetailActivity extends AppCompatActivity{
     protected void onResume() {
         super.onResume();
 
-        Job job=getIntent().getParcelableExtra(JobDetailActivityFragment.CURRENT_JOB);
+        Job job=getIntent().getParcelableExtra(JobDetailFragment.CURRENT_JOB);
         //Set the title of the actionBar
         getSupportActionBar().setTitle(job.getCompanyName());
         if(job!=null){
-            getSupportActionBar().setSubtitle(job.getTitle()+" Job detail");
+            getSupportActionBar().setSubtitle(job.getTitle());
         }
     }
 

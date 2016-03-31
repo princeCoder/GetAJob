@@ -5,7 +5,7 @@
                 android:layout_height="match_parent"
                 android:paddingTop="@dimen/horizontal_margin"
                 android:paddingBottom="@dimen/horizontal_margin"
-                tools:context=".ui.JobDetailActivityFragment"
+                tools:context=".ui.JobDetailFragment"
                 tools:showIn="@layout/activity_job_detail">
     <ScrollView android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -35,6 +35,7 @@
                         android:layout_width="@dimen/icon_dimens"
                         android:layout_gravity="center_vertical"
                         android:layout_height="@dimen/icon_dimens"
+                        android:contentDescription="@string/company_logo"
                         android:layout_marginStart="@dimen/vertical_margin"
                         android:layout_marginLeft="@dimen/vertical_margin"/>
 
@@ -49,7 +50,7 @@
                         <TextView
                             android:id="@+id/job_title"
                             android:layout_width="match_parent"
-                            android:text="Title"
+                            android:text="@string/title"
                             android:layout_height="0dp"
                             android:layout_weight="1"
                             android:textColor="@color/primary_text"
@@ -66,7 +67,7 @@
                             android:layout_height="0dp"
                             android:layout_weight="1"
                             android:maxLines="1"
-                            android:text="Company"
+                            android:text="@string/company"
                             android:paddingRight="@dimen/vertical_margin"
                             android:paddingEnd="@dimen/vertical_margin"
                             android:textColor="@color/secondary_text"
@@ -81,7 +82,7 @@
                             android:layout_height="0dp"
                             android:layout_weight="1"
                             android:maxLines="1"
-                            android:text="City"
+                            android:text="@string/city"
                             android:paddingRight="@dimen/vertical_margin"
                             android:paddingEnd="@dimen/vertical_margin"
                             android:textColor="@color/secondary_text"
@@ -105,7 +106,7 @@
                 <Button android:layout_width="100dp"
                              android:layout_height="40dp"
                              android:id="@+id/save_btn"
-                             android:text="Save"
+                             android:text="@string/save"
                         android:gravity="center"
                         android:textColor="@color/white"
                              android:background="@color/darker_gray"
@@ -115,7 +116,7 @@
                 <Button android:layout_width="100dp"
                              android:layout_height="40dp"
                              android:id="@+id/apply_btn"
-                             android:text="Apply"
+                             android:text="@string/apply"
                              android:gravity="center"
                              android:textColor="@color/white"
                              android:background="@color/colorPrimary"
@@ -135,7 +136,7 @@
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:textAppearance="?attr/textAppearanceListItemSmall"
-                      android:text="Description: "
+                      android:text="@string/description_lbl"
                       android:id="@+id/description"
                       android:gravity="fill_horizontal"
                       android:textColor="@color/primary_text"
@@ -155,7 +156,7 @@
                 <TextView android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?attr/textAppearanceListItemSmall"
-                        android:text="Type: "
+                        android:text="@string/type_lbl"
                         android:id="@+id/typelbl"
                           android:layout_centerVertical="true"
                         android:gravity="center"
@@ -186,7 +187,7 @@
                 <TextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
                           android:textAppearance="?attr/textAppearanceListItemSmall"
-                          android:text="Relocation assistance: "
+                          android:text="@string/relocation_lbl"
                           android:id="@+id/relocationlbl"
                           android:gravity="center"
                           android:layout_centerVertical="true"
@@ -198,7 +199,7 @@
                           android:layout_height="wrap_content"
                           android:id="@+id/relocation"
                           android:gravity="center"
-                          android:text="YES"
+                          android:text="@string/yes"
                           android:layout_centerVertical="true"
                           android:textColor="@color/primary_text"
                           android:layout_toRightOf="@+id/relocationlbl"/>
@@ -218,7 +219,7 @@
                 <TextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
                           android:textAppearance="?attr/textAppearanceListItemSmall"
-                          android:text="Posted: "
+                          android:text="@string/posted_lbl"
                           android:id="@+id/postedlbl"
                           android:gravity="center"
                           android:layout_centerVertical="true"
@@ -231,7 +232,6 @@
                           android:id="@+id/posted"
                           android:layout_centerVertical="true"
                           android:gravity="center"
-                          android:text="02/15/16"
                           android:textColor="@color/primary_text"
                           android:layout_toRightOf="@+id/postedlbl"/>
 
@@ -250,7 +250,7 @@
                 <TextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
                           android:textAppearance="?attr/textAppearanceListItemSmall"
-                          android:text="Keywords: "
+                          android:text="@string/keyword_lbl"
                           android:id="@+id/keywordlbl"
                           android:gravity="center"
                           android:textColor="@color/secondary_text"
@@ -262,21 +262,20 @@
                           android:id="@+id/keyword"
                           android:layout_centerVertical="true"
                           android:gravity="fill_horizontal"
-                          android:text="02/15/16"
                           android:textColor="@color/primary_text"
                           android:layout_below="@+id/keywordlbl"/>
 
             </RelativeLayout>
             <!-- Ad -->
-            <!--<com.google.android.gms.ads.AdView-->
-                <!--android:id="@+id/adView"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_centerHorizontal="true"-->
-                <!--android:layout_alignParentBottom="true"-->
-                <!--ads:adSize="BANNER"-->
-                <!--ads:adUnitId="@string/banner_ad_unit_id">-->
-            <!--</com.google.android.gms.ads.AdView>-->
+            <com.google.android.gms.ads.AdView
+                android:id="@+id/adView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                ads:adSize="BANNER"
+                ads:adUnitId="@string/banner_ad_unit_id">
+            </com.google.android.gms.ads.AdView>
         </LinearLayout>
     </ScrollView>
 

@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -34,8 +33,6 @@ import java.util.ArrayList;
  * A placeholder fragment containing a simple view.
  */
 public class JobsFragment extends Fragment {
-
-    private TextView emptyView;
 
     // My adapter
     private SearchJobRecyclerViewAdapter mAdapter;
@@ -95,8 +92,6 @@ public class JobsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View myView=  inflater.inflate(R.layout.fragment_jobs, container, false);
-        emptyView=(TextView)myView.findViewById(R.id.empty_view);
-
         mRecyclerView=(RecyclerView)myView.findViewById(R.id.recyclerview_job);
         // Set the layout manager
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -140,6 +135,7 @@ public class JobsFragment extends Fragment {
                 requestData(jobParam,mNumPage);
             }else {
 //                @Todo Log there is no internet
+                Snackbar.make(getView(), R.string.no_internet_message, Snackbar.LENGTH_LONG).show();
             }
 
         }
@@ -203,7 +199,7 @@ public class JobsFragment extends Fragment {
                         mProgressBar.setVisibility(View.GONE);
                         mAdapter.swapElements(mJobList);
                         if(mJobList!=null && mJobList.size()==0){ //We display a message in the snackBar
-                            Snackbar.make(getView(), "No job found", Snackbar.LENGTH_LONG).show();
+                            Snackbar.make(getView(), R.string.no_job_found_message, Snackbar.LENGTH_LONG).show();
                         }
                     }
                 }, new Response.ErrorListener() {

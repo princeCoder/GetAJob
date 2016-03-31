@@ -130,7 +130,7 @@ public class SavedJobFragment extends Fragment implements LoaderManager.LoaderCa
     public void onResume() {
         super.onResume();
         //Track the screen
-        mTracker.setScreenName("Saved_Job_Fragment");
+        mTracker.setScreenName(TAG);
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
