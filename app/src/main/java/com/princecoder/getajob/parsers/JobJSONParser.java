@@ -42,15 +42,15 @@ public class JobJSONParser {
                 int pages= jobsJson.getInt(PAGES);
                 // We brodcast the response to the fragment
                 Intent intent = new Intent(JobsFragment.PAGE);
-                intent.putExtra(context.getString(R.string.num_page_tag),pages);
-                if(context!=null)
+                if(content!=null){
+                    intent.putExtra(context.getString(R.string.num_page_tag),pages);
                     context.sendBroadcast(intent);
-
+                }
             }
 
             JSONArray jobsArray = jobsJson.getJSONArray("listing");
 
-            ArrayList<Job> jobArrayList = new ArrayList<Job>(jobsArray.length());
+            ArrayList<Job> jobArrayList = new ArrayList<>(jobsArray.length());
 
 
             for(int i = 0; i < jobsArray.length(); i++) {
@@ -77,8 +77,10 @@ public class JobJSONParser {
                         JSONObject locationObject=company.getJSONObject(LOCATION);
                         String lat=locationObject.getString(LAT);
                         String lgn=locationObject.getString(LON);
-                        if(context!=null)//The  context may change
+                        if(context!=null && Utility.isOnline(context))//The  context may change
                         location=Utility.getLocationFromLonLat(context,Double.parseDouble(lgn),Double.parseDouble(lat));
+                        else
+                            return null;
                     }
                     if(company.has(JOB_COMPANY_NAME)){
                         companyName=company.getString(JOB_COMPANY_NAME);

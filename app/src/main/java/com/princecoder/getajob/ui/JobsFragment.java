@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,6 +24,7 @@ import com.princecoder.getajob.adapter.SearchJobRecyclerViewAdapter;
 import com.princecoder.getajob.model.Job;
 import com.princecoder.getajob.parsers.JobJSONParser;
 import com.princecoder.getajob.service.JobService;
+import com.princecoder.getajob.utils.L;
 import com.princecoder.getajob.utils.Utility;
 
 import java.util.ArrayList;
@@ -67,6 +67,9 @@ public class JobsFragment extends Fragment {
     private int mNumPage;
 
     public static final String PAGE="PAGE";
+
+    //Tag
+    public static final String CURRENT_SEARCH="CURRENT_SEARCH";
     
     //Listener
     OnJobSelectedListener mListener;
@@ -123,21 +126,20 @@ public class JobsFragment extends Fragment {
             }
             if (savedInstanceState.containsKey(LIST_TAG)) {
                 mJobList = savedInstanceState.getParcelableArrayList(LIST_TAG);
-                mAdapter.swapElements(mJobList);
+                if(mJobList==null){
+                    jobParam=savedInstanceState.getParcelable(CURRENT_SEARCH);
+                    mNumPage=savedInstanceState.getInt(PAGE);
+                    mProgressBar.setVisibility(View.VISIBLE);
+                    requestData(jobParam,mNumPage);
+                }
+                else
+                    mAdapter.swapElements(mJobList);
             }
         }
         else{
             jobParam=getActivity().getIntent().getParcelableExtra(JOB_TAG);
             mProgressBar.setVisibility(View.VISIBLE);
-
-//           request data using Volley
-            if (Utility.isOnline(getActivity())) {
-                requestData(jobParam,mNumPage);
-            }else {
-//                @Todo Log there is no internet
-                Snackbar.make(getView(), R.string.no_internet_message, Snackbar.LENGTH_LONG).show();
-            }
-
+            requestData(jobParam,mNumPage);
         }
 
         mRecyclerView.setAdapter(mAdapter);
@@ -160,7 +162,6 @@ public class JobsFragment extends Fragment {
 
 
         }
-
         setRetainInstance(true);
         return myView;
     }
@@ -180,38 +181,53 @@ public class JobsFragment extends Fragment {
         if (mPosition != RecyclerView.NO_POSITION) {
             outState.putInt(SELECTED_KEY, mPosition);
         }
-        outState.putParcelableArrayList(LIST_TAG,mJobList);
+        outState.putParcelableArrayList(LIST_TAG, mJobList);
+        outState.putParcelable(CURRENT_SEARCH, jobParam);
+        outState.putInt(PAGE, mNumPage);
         super.onSaveInstanceState(outState);
     }
 
     private void requestData(Job job, int pageNumber) {
+        if(Utility.isOnline(getActivity())){
+            // instantiate the RequestQueue
+            RequestQueue queue = Volley.newRequestQueue(getActivity());
+            String url =buildURL(job,pageNumber);
+            // request a string response asynchronously from the provided URL
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            mJobList = (ArrayList<Job>) JobJSONParser.parseFeed(getActivity(), response);
+                            mProgressBar.setVisibility(View.GONE);
+                            mAdapter.swapElements(mJobList);
+                            if(mJobList!=null && mJobList.size()==0){ //We display a message in the snackBar
+                                Snackbar.make(getView(), R.string.no_job_found_message, Snackbar.LENGTH_LONG).show();
+                            }
+                            else if(!Utility.isOnline(getActivity())){ //We display a message in the snackBar
+                                Snackbar.make(getView(), R.string.no_internet_message, Snackbar.LENGTH_LONG).show();
+                                mProgressBar.setVisibility(View.GONE);
+                            }
 
-        // instantiate the RequestQueue
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
-        String url =buildURL(job,pageNumber);
-
-        // request a string response asynchronously from the provided URL
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        mJobList = (ArrayList<Job>) JobJSONParser.parseFeed(getContext(), response);
-                        mProgressBar.setVisibility(View.GONE);
-                        mAdapter.swapElements(mJobList);
-                        if(mJobList!=null && mJobList.size()==0){ //We display a message in the snackBar
-                            Snackbar.make(getView(), R.string.no_job_found_message, Snackbar.LENGTH_LONG).show();
                         }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            if(!Utility.isOnline(getActivity())){ //We display a message in the snackBar
+                                Snackbar.make(getView(), R.string.no_internet_message, Snackbar.LENGTH_LONG).show();
+                                mProgressBar.setVisibility(View.GONE);
+                            }
+                            else
+                                Snackbar.make(getView(), error.getMessage(), Snackbar.LENGTH_LONG).show();
+                            mProgressBar.setVisibility(View.GONE);
+                        }
+            });
 
-// add the request to the RequestQueue
-        queue.add(stringRequest);
-
+            // add the request to the RequestQueue
+            queue.add(stringRequest);
+        } else {
+            L.toast(getActivity(), getResources().getString(R.string.no_internet_message));
+            mProgressBar.setVisibility(View.GONE);
+        }
     }
 
     private String buildURL(Job job, int pageNumber) {

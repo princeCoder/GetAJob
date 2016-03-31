@@ -3,7 +3,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_search"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_search"
             android:title="@string/nav_search"/>
         <item
             android:id="@+id/nav_myJobs"
@@ -11,11 +11,11 @@
             android:title="@string/nav_myJobs"/>
         <item
             android:id="@+id/nav_about"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_about"
             android:title="@string/nav_about"/>
         <item
             android:id="@+id/nav_feedback"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_feedback"
             android:title="@string/nav_feedback"/>
         <item
             android:id="@+id/nav_setting"

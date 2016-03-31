@@ -11,7 +11,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Choose the Location"
+            android:text="@string/city_listview_header_title"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="@color/white"
             android:gravity="center"/>
     </RelativeLayout>
     <android.support.v7.widget.SearchView

@@ -86,5 +86,6 @@
         <br/>Please feel free to leave me any feedback.
     </string>
     <string name="app_version">Version: 1.0.0</string>
+    <string name="city_listview_header_title">Choose the Location</string>
 
 </resources>

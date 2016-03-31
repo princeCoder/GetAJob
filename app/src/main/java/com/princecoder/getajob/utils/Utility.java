@@ -31,6 +31,7 @@ public class Utility {
     static
     {
         myLocations =new TreeMap<>();
+        myLocations.put("","");
         myLocations.put("Norfolk, VA","2cit");
         myLocations.put("Amsterdam","amsterdamnl");
         myLocations.put("Amsterdam, NL","amsterdamnlnl");
