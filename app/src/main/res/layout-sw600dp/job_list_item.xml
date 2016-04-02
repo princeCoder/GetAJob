@@ -114,6 +114,7 @@
             android:layout_weight="2"
             android:layout_gravity="center_vertical"
             android:src="@mipmap/ic_action_trash"
+            android:contentDescription="@string/delete_saved_job"
             android:background="@null"
             android:visibility="invisible"
             android:layout_height="wrap_content"/>

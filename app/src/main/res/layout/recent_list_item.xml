@@ -46,5 +46,6 @@
         android:layout_gravity="center_vertical"
         android:src="@mipmap/ic_action_trash"
         android:background="@null"
+        android:contentDescription="@string/delete_seach"
         android:layout_height="wrap_content"/>
 </LinearLayout>

@@ -1,7 +1,11 @@
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.android.application'
 
-def AUTHENTIC_JOBS__API_KEY = '"' + AuthenticJobsAPIKey + '"' ?: '"Missing Football Scores API Key"'
+def AUTHENTIC_JOBS__API_KEY = '"' + AuthenticJobsAPIKey + '"' ?: '"Missing AUTHENTICJOBS API Key"'
+def STORE_FILE = '"' + store_File + '"' ?: '"Missing Store file"'
+def STORE_PASSWORD = '"' + store_Password + '"' ?: '"Missing Store password "'
+def KEY_ALIAS = '"' + key_Alias + '"' ?: '"Missing Key Alias"'
+def KEY_PASSWORD = '"' + key_Password + '"' ?: '"Missing key password"'
 
 android {
     compileSdkVersion 23
@@ -14,6 +18,14 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    signingConfigs {
+        release {
+            storeFile file(STORE_FILE)
+            storePassword STORE_PASSWORD
+            keyAlias KEY_ALIAS
+            keyPassword KEY_PASSWORD
+        }
+    }
     buildTypes {
         all {
             buildConfigField 'String', 'AUTHENTIC_JOBS__API_KEY', AUTHENTIC_JOBS__API_KEY
@@ -21,6 +33,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 

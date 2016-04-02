@@ -120,6 +120,7 @@
             android:src="@mipmap/ic_action_trash"
             android:background="@null"
             android:visibility="invisible"
+            android:contentDescription="@string/delete_saved_job"
             android:layout_marginRight="@dimen/vertical_margin"
             android:layout_marginEnd="@dimen/vertical_margin"
             android:layout_height="wrap_content"/>

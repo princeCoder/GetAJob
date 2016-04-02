@@ -47,6 +47,7 @@
         android:src="@mipmap/ic_action_trash"
         android:background="@null"
         android:layout_marginRight="@dimen/vertical_margin"
+        android:contentDescription="@string/delete_seach"
         android:layout_marginEnd="@dimen/vertical_margin"
         android:layout_height="wrap_content"/>
 </LinearLayout>
