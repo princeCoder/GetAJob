@@ -203,7 +203,7 @@ public class JobsFragment extends Fragment {
                             if(mJobList!=null && mJobList.size()==0){ //We display a message in the snackBar
                                 Snackbar.make(getView(), R.string.no_job_found_message, Snackbar.LENGTH_LONG).show();
                             }
-                            else if(!Utility.isOnline(getActivity())){ //We display a message in the snackBar
+                            else if(getActivity()!=null && !Utility.isOnline(getActivity())){ //We display a message in the snackBar
                                 Snackbar.make(getView(), R.string.no_internet_message, Snackbar.LENGTH_LONG).show();
                                 mProgressBar.setVisibility(View.GONE);
                             }
@@ -212,19 +212,23 @@ public class JobsFragment extends Fragment {
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            if(!Utility.isOnline(getActivity())){ //We display a message in the snackBar
+                            if(getActivity()!=null && !Utility.isOnline(getActivity())){ //We display a message in the snackBar
                                 Snackbar.make(getView(), R.string.no_internet_message, Snackbar.LENGTH_LONG).show();
                                 mProgressBar.setVisibility(View.GONE);
                             }
-                            else
+                            else{
+                                if(getView()!=null)
                                 Snackbar.make(getView(), error.getMessage(), Snackbar.LENGTH_LONG).show();
-                            mProgressBar.setVisibility(View.GONE);
+                                mProgressBar.setVisibility(View.GONE);
+                            }
+
                         }
             });
 
             // add the request to the RequestQueue
             queue.add(stringRequest);
         } else {
+            if(getActivity()!=null)
             L.toast(getActivity(), getResources().getString(R.string.no_internet_message));
             mProgressBar.setVisibility(View.GONE);
         }

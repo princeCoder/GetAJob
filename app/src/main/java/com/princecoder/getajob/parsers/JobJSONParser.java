@@ -42,7 +42,7 @@ public class JobJSONParser {
                 int pages= jobsJson.getInt(PAGES);
                 // We brodcast the response to the fragment
                 Intent intent = new Intent(JobsFragment.PAGE);
-                if(content!=null){
+                if(context!=null){
                     intent.putExtra(context.getString(R.string.num_page_tag),pages);
                     context.sendBroadcast(intent);
                 }
@@ -75,12 +75,7 @@ public class JobJSONParser {
 
                     if(company.has(LOCATION)){
                         JSONObject locationObject=company.getJSONObject(LOCATION);
-                        String lat=locationObject.getString(LAT);
-                        String lgn=locationObject.getString(LON);
-                        if(context!=null && Utility.isOnline(context))//The  context may change
-                        location=Utility.getLocationFromLonLat(context,Double.parseDouble(lgn),Double.parseDouble(lat));
-                        else
-                            return null;
+                        location=locationObject.getString(JOB_LOCATION);
                     }
                     if(company.has(JOB_COMPANY_NAME)){
                         companyName=company.getString(JOB_COMPANY_NAME);
@@ -92,7 +87,6 @@ public class JobJSONParser {
                         tagLine=company.getString(JOB_COMPANY_TAG_LINE);
                     }
                 }
-
 
                 Job job=new Job(postId,title,description
                         ,perks,postdate,relocationAssistance

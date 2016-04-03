@@ -140,9 +140,9 @@ public class Utility {
      * @return boolean
      */
     public static boolean isOnline(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
+            ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo netInfo = cm.getActiveNetworkInfo();
+            return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
     //Get the Location Using lon and lat coords
@@ -152,9 +152,6 @@ public class Utility {
         try {
             addresses = gcd.getFromLocation(lat,lon, 1);
             if (addresses.size() > 0){
-                String cit=addresses.get(0).getLocality();
-                String coun=addresses.get(0).getAdminArea();
-
                 String city=addresses.get(0).getLocality()!=null?addresses.get(0).getLocality()+", ":"";
                 String local=city+((addresses.get(0).getAdminArea()!=null)?addresses.get(0).getAdminArea():addresses.get(0).getCountryName());
                 return local;
